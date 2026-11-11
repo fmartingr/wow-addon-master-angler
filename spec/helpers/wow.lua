@@ -20,6 +20,7 @@ local function newFrame(name)
 			GetHeight = true,
 			GetAlpha = true,
 			GetAttribute = true,
+			HookScript = true,
 		}
 		local prefixes = { "Set", "Register", "Unregister", "Create", "Enable", "Clear", "Add" }
 		local isMethod = known[key]
@@ -36,6 +37,10 @@ local function newFrame(name)
 			if key == "SetScript" then
 				local event, fn = ...
 				self.scripts[event] = fn
+			elseif key == "HookScript" then
+				local event, fn = ...
+				self.hooks = self.hooks or {}
+				self.hooks[event] = fn
 			elseif key == "SetAttribute" then
 				local attr, value = ...
 				self.attrs[attr] = value
@@ -112,6 +117,7 @@ end
 
 function M.reset()
 	M.combat = false
+	M.bindings = {}
 	M.now = 100
 	M.units = {}
 	M.knownSpells = {}
@@ -119,6 +125,7 @@ function M.reset()
 	M.tempEnchant = nil
 	M.overrides = {}
 	M.clearedOverrides = 0
+	M.clearedOwners = {}
 	M.mouseFocus = nil
 	M.mouselooking = false
 	M.worn = {}
@@ -192,6 +199,10 @@ function M.installStubs()
 	_G.hooksecurefunc = function() end
 	_G.Enum = { TooltipDataType = { Item = 0 }, ItemWeaponSubclass = { Fishingpole = 20 } }
 	_G.UIParent = newFrame("UIParent")
+	_G.GetBindingKey = function(action)
+		local list = M.bindings[action] or {}
+		return list[1], list[2]
+	end
 	_G.GetTime = function()
 		return M.now
 	end
@@ -218,8 +229,15 @@ function M.installStubs()
 	_G.SetOverrideBindingClick = function(owner, priority, key, name)
 		M.overrides[#M.overrides + 1] = { owner = owner, priority = priority, key = key, name = name }
 	end
-	_G.ClearOverrideBindings = function()
-		M.overrides = {}
+	_G.ClearOverrideBindings = function(owner)
+		M.clearedOwners[#M.clearedOwners + 1] = owner
+		local kept = {}
+		for _, override in ipairs(M.overrides) do
+			if override.owner ~= owner then
+				kept[#kept + 1] = override
+			end
+		end
+		M.overrides = kept
 		M.clearedOverrides = M.clearedOverrides + 1
 	end
 	_G.C_Item = {

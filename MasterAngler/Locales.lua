@@ -28,6 +28,8 @@ locales.enUS = {
 	SET_DOUBLECLICK_TIP = "A double right-click on the game world applies a lure or casts Fishing. It works only with fishing mode on or a fishing pole in hand, and out of combat.",
 	SET_AUTOLURE = "Auto-lure",
 	SET_AUTOLURE_TIP = "Applies the strongest lure from your bags when the pole has none or less than 30 seconds left.",
+	SET_INTERACT = "Interact key casts",
+	SET_INTERACT_TIP = "With fishing mode on or a pole in hand, the Interact key applies a lure or casts. It does its normal action when the line is out, near NPCs and objects, with a window open, and in combat.",
 }
 
 locales.deDE = {
@@ -55,6 +57,8 @@ locales.deDE = {
 	SET_DOUBLECLICK_TIP = "Ein doppelter Rechtsklick auf die Spielwelt trägt einen Köder auf oder wirft Angeln aus. Nur mit Angelmodus oder Angel in der Hand und außerhalb des Kampfes.",
 	SET_AUTOLURE = "Automatischer Köder",
 	SET_AUTOLURE_TIP = "Trägt den stärksten Köder aus deinen Taschen auf, wenn die Angel keinen oder weniger als 30 Sekunden hat.",
+	SET_INTERACT = "Interaktionstaste wirft aus",
+	SET_INTERACT_TIP = "Mit Angelmodus oder Angel in der Hand trägt die Interaktionstaste einen Köder auf oder wirft aus. Sie tut ihre normale Aktion bei ausgeworfener Leine, bei NPCs und Objekten, bei offenem Fenster und im Kampf.",
 }
 
 locales.esES = {
@@ -82,6 +86,8 @@ locales.esES = {
 	SET_DOUBLECLICK_TIP = "Un doble clic derecho en el mundo aplica un cebo o lanza Pesca. Solo con el modo pesca activo o una caña en la mano, y fuera de combate.",
 	SET_AUTOLURE = "Cebo automático",
 	SET_AUTOLURE_TIP = "Aplica el mejor cebo de tus bolsas cuando la caña no tiene o le quedan menos de 30 segundos.",
+	SET_INTERACT = "La tecla de interacción lanza",
+	SET_INTERACT_TIP = "Con el modo pesca o una caña en la mano, la tecla de interacción aplica un cebo o lanza. Hace su acción normal con la línea echada, cerca de PNJ y objetos, con una ventana abierta y en combate.",
 }
 
 locales.frFR = {
@@ -109,6 +115,8 @@ locales.frFR = {
 	SET_DOUBLECLICK_TIP = "Un double clic droit sur le monde applique un appât ou lance Pêche. Seulement en mode pêche ou avec une canne en main, hors combat.",
 	SET_AUTOLURE = "Appât automatique",
 	SET_AUTOLURE_TIP = "Applique le meilleur appât de vos sacs quand la canne n'en a pas ou qu'il reste moins de 30 secondes.",
+	SET_INTERACT = "La touche d'interaction lance",
+	SET_INTERACT_TIP = "En mode pêche ou avec une canne en main, la touche d'interaction applique un appât ou lance. Elle garde son action normale ligne lancée, près des PNJ et objets, fenêtre ouverte et en combat.",
 }
 
 locales.itIT = {
@@ -136,6 +144,8 @@ locales.itIT = {
 	SET_DOUBLECLICK_TIP = "Un doppio clic destro sul mondo applica un'esca o lancia Pesca. Solo in modalità pesca o con una canna in mano, fuori combattimento.",
 	SET_AUTOLURE = "Esca automatica",
 	SET_AUTOLURE_TIP = "Applica l'esca migliore dalle tue borse quando la canna non ne ha o restano meno di 30 secondi.",
+	SET_INTERACT = "Il tasto Interagisci lancia",
+	SET_INTERACT_TIP = "In modalità pesca o con una canna in mano, il tasto Interagisci applica un'esca o lancia. Fa la sua azione normale con la lenza in acqua, vicino a PNG e oggetti, con una finestra aperta e in combattimento.",
 }
 
 locales.ptBR = {
@@ -163,6 +173,8 @@ locales.ptBR = {
 	SET_DOUBLECLICK_TIP = "Um clique direito duplo no mundo aplica uma isca ou lança Pesca. Só com o modo de pesca ligado ou uma vara na mão, fora de combate.",
 	SET_AUTOLURE = "Isca automática",
 	SET_AUTOLURE_TIP = "Aplica a melhor isca das suas bolsas quando a vara não tem ou restam menos de 30 segundos.",
+	SET_INTERACT = "A tecla de interação lança",
+	SET_INTERACT_TIP = "Com o modo de pesca ou uma vara na mão, a tecla de interação aplica uma isca ou lança. Ela faz a ação normal com a linha lançada, perto de NPCs e objetos, com uma janela aberta e em combate.",
 }
 
 locales.enGB = locales.enUS

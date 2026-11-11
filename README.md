@@ -8,6 +8,7 @@ Fishing quality of life addon for WoW Forever.
 - A swap asked in combat runs when combat ends.
 - Double right-click on the game world: applies the strongest lure when the pole needs one, otherwise casts Fishing. It works with fishing mode on or a fishing pole in the main hand, out of combat.
 - Auto-lure: a lure is applied when the pole has none or less than 30 seconds left. With no lure in the bags, the cast happens without one.
+- Interact key: with fishing mode on or a pole in hand, the game's Interact key (set it in the Key Bindings menu) applies a lure or casts. It does its normal action when the line is out, for 1 second after the line comes in, near a soft-interact target, with a vendor, loot, quest or similar window open, in combat, or when the setting "Interact key casts" is off.
 - Sound profile: fishing mode mutes music, ambience and dialog and raises effects. The old values return when the mode ends, also after a crash.
 
 ## Install

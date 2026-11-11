@@ -22,3 +22,4 @@ CVars.lua
 Sound.lua
 Fishing.lua
 Cast.lua
+Interact.lua

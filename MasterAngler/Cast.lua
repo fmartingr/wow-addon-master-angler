@@ -149,6 +149,13 @@ function Cast.OnChannel(event, unit, _, spellID)
 	end
 end
 
+-- A key override can sit on for minutes, and the lure crossing its refresh time fires no event.
+button:SetScript("PreClick", function(_, _, down)
+	if not down then
+		Cast.Prepare()
+	end
+end)
+
 -- Clearing on the down would leave the up, which fires the action, with no binding.
 button:SetScript("PostClick", function(_, _, down)
 	if down then
@@ -161,6 +168,13 @@ end)
 local function prepare()
 	Cast.Prepare()
 end
+
+-- A /reload during the channel fires no CHANNEL_START, so the line state comes from the live channel.
+local function syncLine()
+	local spellID = select(8, ns.Safe(UnitChannelInfo, "player"))
+	Cast.lineOut = spellID ~= nil and ns.Fishing.IsFishingSpell(spellID)
+end
+Cast.SyncLine = syncLine
 
 ns.On("GLOBAL_MOUSE_DOWN", Cast.OnMouseDown)
 ns.On("UNIT_SPELLCAST_CHANNEL_START", Cast.OnChannel)
@@ -176,4 +190,5 @@ ns.On("UNIT_INVENTORY_CHANGED", function(_, unit)
 end)
 ns.Mode.Subscribe(prepare)
 ns.Settings.AddToggle("doubleClick", "SET_DOUBLECLICK", "SET_DOUBLECLICK_TIP", true)
+table.insert(ns.startup, syncLine)
 table.insert(ns.startup, prepare)

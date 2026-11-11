@@ -268,6 +268,15 @@ describe("Cast", function()
 			assert.equals("spell", button:GetAttribute("type"))
 		end)
 
+		it("PreClick on the up picks a lure that became needed after Prepare", function()
+			assert.is_true(ns.Cast.Prepare())
+			needLure()
+			button.scripts.PreClick(button, "LeftButton", true)
+			assert.equals("spell", button:GetAttribute("type"))
+			button.scripts.PreClick(button, "LeftButton", false)
+			assert.equals("item", button:GetAttribute("type"))
+		end)
+
 		it("PLAYER_REGEN_DISABLED clears it", function()
 			setOverride()
 			fire("PLAYER_REGEN_DISABLED")
@@ -327,6 +336,22 @@ describe("Cast", function()
 			assert.is_true(ns.Cast.lineOut)
 			fire("UNIT_SPELLCAST_CHANNEL_STOP", wow.markSecret("player"), "guid", 7620)
 			assert.is_true(ns.Cast.lineOut)
+		end)
+
+		it("reads a fishing channel already running at login", function()
+			_G.UnitChannelInfo = function()
+				return "Fishing", "", 0, 0, 0, false, false, 7620
+			end
+			fire("PLAYER_LOGIN")
+			assert.is_true(ns.Cast.lineOut)
+			_G.UnitChannelInfo = function()
+				return "Other", "", 0, 0, 0, false, false, 1
+			end
+			ns.Cast.SyncLine()
+			assert.is_false(ns.Cast.lineOut)
+			_G.UnitChannelInfo = function() end
+			ns.Cast.SyncLine()
+			assert.is_false(ns.Cast.lineOut)
 		end)
 
 		it("a failing subscriber is reported once", function()

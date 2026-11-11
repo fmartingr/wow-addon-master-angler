@@ -25,3 +25,13 @@ No check was run by the agent: the game client is not available to it.
 | MC17 | The right-click camera turn still works after a cast | not run |
 | MC18 | A right-click on the bobber loots normally | not run |
 | MC19 | `/dump GetWeaponEnchantInfo()` with a lure on the pole: note if the time is in ms or in s, and confirm the lure refresh at 30 seconds | not run |
+| MC20 | With the pole in hand, the Interact key applies a lure or casts | not run |
+| MC21 | With the line out, the Interact key loots the bobber at the splash | not run |
+| MC22 | With a vendor NPC in front, the Interact key opens the vendor | not run |
+| MC23 | With a mob corpse in front, the Interact key loots it | not run |
+| MC24 | In combat, the Interact key acts normally | not run |
+| MC25 | With the "Interact key casts" setting off, the Interact key acts normally | not run |
+| MC26 | With fishing mode off and no pole, the Interact key acts normally | not run |
+| MC27 | With the pole in hand, the Interact override stays stable: no repeated `UPDATE_BINDINGS` loop (check `/etrace`) | not run |
+| MC28 | `/reload` with the line out: the Interact key still loots the bobber (spell ID is the 8th return of `UnitChannelInfo`) | not run |
+| MC29 | With the game menu, settings or key bindings open, the Interact key acts normally | not run |
