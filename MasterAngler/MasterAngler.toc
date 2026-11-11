@@ -12,6 +12,10 @@
 ## Version: 0.1.0
 ## X-License: MIT
 ## SavedVariables: MasterAnglerDB
+Libs/LibStub/LibStub.lua
+Libs/CallbackHandler-1.0/CallbackHandler-1.0.lua
+Libs/LibDataBroker-1.1/LibDataBroker-1.1.lua
+Libs/LibDBIcon-1.0/LibDBIcon-1.0.lua
 Core.lua
 Locales.lua
 Settings.lua
@@ -24,3 +28,6 @@ Fishing.lua
 Cast.lua
 Interact.lua
 Catches.lua
+Journal.lua
+Window.lua
+Minimap.lua

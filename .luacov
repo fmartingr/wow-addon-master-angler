@@ -12,6 +12,9 @@ return {
 		"MasterAngler/Cast$",
 		"MasterAngler/Interact$",
 		"MasterAngler/Catches$",
+		"MasterAngler/Journal$",
+		"MasterAngler/Window$",
+		"MasterAngler/Minimap$",
 	},
 	reporter = "default",
 }

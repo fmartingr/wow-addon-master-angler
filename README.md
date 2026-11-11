@@ -10,6 +10,8 @@ Fishing quality of life addon for WoW Forever.
 - Auto-lure: a lure is applied when the pole has none or less than 30 seconds left. With no lure in the bags, the cast happens without one.
 - Interact key: with fishing mode on or a pole in hand, the game's Interact key (set it in the Key Bindings menu) applies a lure or casts. It does its normal action when the line is out, for 1 second after the line comes in, near a soft-interact target, with a vendor, loot, quest or similar window open, in combat, or when the setting "Interact key casts" is off.
 - Catch log: each item that you loot from a fishing loot window is stored for the character with zone, position, server time and game time. Coins are not stored.
+- Fish journal: one page for each zone with the items that the character caught, with icon, name and count. A hover shows the first and last catch. Items that only another character of the account caught show as `???`.
+- Minimap button: left-click opens the journal, right-click toggles fishing mode.
 - Sound profile: fishing mode mutes music, ambience and dialog and raises effects. The old values return when the mode ends, also after a crash.
 
 ## Install
@@ -25,6 +27,8 @@ Use `make install` to copy the addon instead of a link.
 - `/masterangler` or `/masterangler help` lists all commands.
 - `/masterangler savegear` stores the worn gear as the fishing set.
 - `/masterangler mode` turns fishing mode on or off.
+- `/masterangler journal` opens or closes the fish journal.
+- `/masterangler minimap` shows or hides the minimap button.
 - `/masterangler stats` prints the number of catches of the character.
 
 ## Sound profile notes
@@ -45,7 +49,7 @@ Manual checks are in `docs/manual-checklist.md`.
 
 ## License
 
-MIT, see `LICENSE`.
+MIT, see `LICENSE`. The bundled libraries keep their own licenses in `MasterAngler/Libs/LICENSES.txt`.
 
 ## CI and release
 

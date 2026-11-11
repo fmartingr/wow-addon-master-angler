@@ -51,7 +51,11 @@ local function newFrame(name)
 			elseif key == "UnregisterEvent" then
 				self.events[(...)] = nil
 			elseif key == "Show" then
+				local wasShown = self.shown
 				self.shown = true
+				if not wasShown and self.scripts.OnShow then
+					self.scripts.OnShow(self)
+				end
 			elseif key == "Hide" then
 				self.shown = false
 			elseif key == "IsShown" then
@@ -201,6 +205,33 @@ function M.installStubs()
 	_G.hooksecurefunc = function() end
 	_G.Enum = { TooltipDataType = { Item = 0 }, ItemWeaponSubclass = { Fishingpole = 20 }, UIMapType = { Zone = 3 } }
 	_G.UIParent = newFrame("UIParent")
+	_G.date = os.date
+	_G.GameTooltip = {
+		lines = {},
+		shown = false,
+		SetOwner = function(self, owner)
+			self.owner = owner
+			self.lines = {}
+		end,
+		IsOwned = function(self, frame)
+			return self.owner == frame
+		end,
+		IsShown = function(self)
+			return self.shown
+		end,
+		SetItemByID = function(self, id)
+			self.itemID = id
+		end,
+		AddLine = function(self, text)
+			self.lines[#self.lines + 1] = text
+		end,
+		Show = function(self)
+			self.shown = true
+		end,
+		Hide = function(self)
+			self.shown = false
+		end,
+	}
 	_G.IsFishingLoot = function()
 		return M.loot.fishing
 	end

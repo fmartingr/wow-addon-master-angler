@@ -12,6 +12,7 @@ globals = {
 }
 
 read_globals = {
+	"ButtonFrameTemplate_HidePortrait",
 	"C_Container",
 	"C_Item",
 	"C_Map",
@@ -24,6 +25,7 @@ read_globals = {
 	"CursorHasItem",
 	"DEFAULT_CHAT_FRAME",
 	"Enum",
+	"GameTooltip",
 	"GetBindingKey",
 	"GetCVar",
 	"GetGameTime",
@@ -43,6 +45,7 @@ read_globals = {
 	"IsFishingLoot",
 	"IsMouselooking",
 	"IsPlayerSpell",
+	"LibStub",
 	"MouselookStop",
 	"PickupInventoryItem",
 	"PutItemInBackpack",
@@ -55,6 +58,7 @@ read_globals = {
 	"UnitExists",
 	"UnitName",
 	"WorldFrame",
+	"date",
 	"issecretvalue",
 }
 

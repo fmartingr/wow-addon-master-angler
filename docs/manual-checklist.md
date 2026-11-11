@@ -39,3 +39,14 @@ No check was run by the agent: the game client is not available to it.
 | MC31 | `/dump MasterAnglerDB.chars["<Name-Realm>"].catches[#MasterAnglerDB.chars["<Name-Realm>"].catches]` shows the zone map ID and plausible x and y | not run |
 | MC32 | The loot of a mob corpse adds no row | not run |
 | MC33 | With full bags, a fishing catch that stays in the loot window adds no row | not run |
+| MC34 | The minimap button shows, drags and keeps its place after `/reload` | not run |
+| MC35 | Left-click on the minimap button opens the journal on the current zone | not run |
+| MC36 | Right-click on the minimap button toggles fishing mode | not run |
+| MC37 | A caught item shows with icon, name and count | not run |
+| MC38 | The hover on a caught item shows the first and last catch | not run |
+| MC39 | On an alt, the fish of the main character show as `???` | not run |
+| MC40 | Escape closes the journal window | not run |
+| MC41 | The journal window looks like a Blizzard panel | not run |
+| MC42 | `/masterangler minimap` and the settings checkbox hide and show the button together | not run |
+| MC43 | Settings panel: the five toggles (double right-click, auto-lure, Interact key, sound profile, minimap button) show and keep their value after `/reload` | not run |
+| MC44 | Journal, tooltip and settings texts in deDE, esES, frFR, itIT, ptBR | not run |
