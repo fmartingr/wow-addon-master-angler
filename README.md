@@ -1,10 +1,11 @@
 # Master Angler
 
-Fishing quality of life addon for WoW Forever (interface 16001).
+Fishing quality of life addon for WoW Forever.
 
 ## Features
 
-- Foundation only: saved variables, a settings category and `/masterangler help`.
+- Fishing set: save the worn gear and swap to it with fishing mode. The old gear returns when the mode ends.
+- A swap asked in combat runs when combat ends.
 
 ## Install
 
@@ -17,6 +18,8 @@ Use `make install` to copy the addon instead of a link.
 ## Commands
 
 - `/masterangler` or `/masterangler help` lists all commands.
+- `/masterangler savegear` stores the worn gear as the fishing set.
+- `/masterangler mode` turns fishing mode on or off.
 
 ## Languages
 

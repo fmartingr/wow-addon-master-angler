@@ -57,6 +57,10 @@ end
 
 M.newFrame = newFrame
 
+function M.itemLink(id)
+	return "|cffffffff|Hitem:" .. id .. "::::::::60:::::::|h[Item " .. id .. "]|h|r"
+end
+
 function M.readToc()
 	local files = {}
 	local file = assert(io.open(ADDON_DIR .. ADDON_NAME .. ".toc", "r"))
@@ -95,6 +99,14 @@ end
 
 function M.reset()
 	M.combat = false
+	M.worn = {}
+	M.itemCounts = {}
+	M.freeSlots = {}
+	M.bagTypes = {}
+	M.cursor = nil
+	M.equipCalls = {}
+	M.puts = {}
+	M.cleared = 0
 	M.secrets = {}
 	M.cvars = {}
 	M.cvarWrites = {}
@@ -157,7 +169,53 @@ function M.installStubs()
 	end
 	_G.hooksecurefunc = function() end
 	_G.Enum = { TooltipDataType = { Item = 0 } }
-	_G.C_Item = {}
+	_G.C_Item = {
+		EquipItemByName = function(link, slot)
+			M.equipCalls[#M.equipCalls + 1] = { link, slot }
+			M.worn[slot] = link
+		end,
+	}
+	_G.C_Container = {
+		GetContainerNumFreeSlots = function(bag)
+			local free = M.freeSlots[bag]
+			if free == nil then
+				free = 5
+			end
+			return free, M.bagTypes[bag] or 0
+		end,
+		ContainerIDToInventoryID = function(bag)
+			return 19 + bag
+		end,
+	}
+	_G.GetInventoryItemLink = function(_, slot)
+		return M.worn[slot]
+	end
+	_G.GetItemCount = function(id)
+		local count = M.itemCounts[id]
+		if count == nil then
+			return 1
+		end
+		return count
+	end
+	_G.PickupInventoryItem = function(slot)
+		M.cursor = M.worn[slot]
+		M.worn[slot] = nil
+	end
+	_G.CursorHasItem = function()
+		return M.cursor ~= nil
+	end
+	_G.ClearCursor = function()
+		M.cleared = M.cleared + 1
+		M.cursor = nil
+	end
+	_G.PutItemInBackpack = function()
+		M.puts[#M.puts + 1] = { bag = 0 }
+		M.cursor = nil
+	end
+	_G.PutItemInBag = function(invSlot)
+		M.puts[#M.puts + 1] = { bag = invSlot - 19, invSlot = invSlot }
+		M.cursor = nil
+	end
 	_G.UISpecialFrames = {}
 	_G.SlashCmdList = {}
 	_G.DEFAULT_CHAT_FRAME = {

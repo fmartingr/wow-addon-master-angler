@@ -11,6 +11,16 @@ locales.enUS = {
 	COMMAND_FAILED = "The command failed. Some functions can be missing.",
 	DB_NEWER = "The saved data comes from a newer version. Master Angler does not save changes.",
 	SETTINGS_UNAVAILABLE = "The settings panel is not available on this client.",
+	GEAR_SAVED = "Fishing set saved: %d items.",
+	NO_GEAR_SAVED = "No fishing set saved. Wear your fishing gear and use /masterangler savegear.",
+	SWAP_AFTER_COMBAT = "In combat. The gear swap runs when combat ends.",
+	SWAP_CANCELLED = "The pending gear swap is cancelled.",
+	MODE_ON = "Fishing mode on.",
+	MODE_OFF = "Fishing mode off.",
+	GEAR_MISSING = "Not in your bags: %s",
+	BAGS_FULL = "Bags are full. %s stays equipped.",
+	HELP_SAVEGEAR = "save the worn gear as the fishing set",
+	HELP_MODE = "turn fishing mode on or off",
 }
 
 locales.deDE = {
@@ -21,6 +31,16 @@ locales.deDE = {
 	COMMAND_FAILED = "Der Befehl ist fehlgeschlagen. Einige Funktionen können fehlen.",
 	DB_NEWER = "Die gespeicherten Daten stammen von einer neueren Version. Master Angler speichert keine Änderungen.",
 	SETTINGS_UNAVAILABLE = "Das Optionsfenster ist auf diesem Client nicht verfügbar.",
+	GEAR_SAVED = "Angelset gespeichert: %d Gegenstände.",
+	NO_GEAR_SAVED = "Kein Angelset gespeichert. Lege die Angelausrüstung an und nutze /masterangler savegear.",
+	SWAP_AFTER_COMBAT = "Im Kampf. Der Ausrüstungswechsel erfolgt nach dem Kampf.",
+	SWAP_CANCELLED = "Der ausstehende Ausrüstungswechsel ist abgebrochen.",
+	MODE_ON = "Angelmodus an.",
+	MODE_OFF = "Angelmodus aus.",
+	GEAR_MISSING = "Nicht in deinen Taschen: %s",
+	BAGS_FULL = "Taschen voll. %s bleibt angelegt.",
+	HELP_SAVEGEAR = "getragene Ausrüstung als Angelset speichern",
+	HELP_MODE = "Angelmodus ein- oder ausschalten",
 }
 
 locales.esES = {
@@ -31,6 +51,16 @@ locales.esES = {
 	COMMAND_FAILED = "El comando ha fallado. Pueden faltar algunas funciones.",
 	DB_NEWER = "Los datos guardados son de una versión más nueva. Master Angler no guarda cambios.",
 	SETTINGS_UNAVAILABLE = "El panel de opciones no está disponible en este cliente.",
+	GEAR_SAVED = "Equipo de pesca guardado: %d objetos.",
+	NO_GEAR_SAVED = "No hay equipo de pesca guardado. Equipa tu ropa de pesca y usa /masterangler savegear.",
+	SWAP_AFTER_COMBAT = "En combate. El cambio de equipo se hará al terminar el combate.",
+	SWAP_CANCELLED = "El cambio de equipo pendiente se ha cancelado.",
+	MODE_ON = "Modo pesca activado.",
+	MODE_OFF = "Modo pesca desactivado.",
+	GEAR_MISSING = "No está en tus bolsas: %s",
+	BAGS_FULL = "Bolsas llenas. %s sigue equipado.",
+	HELP_SAVEGEAR = "guardar el equipo puesto como equipo de pesca",
+	HELP_MODE = "activar o desactivar el modo pesca",
 }
 
 locales.frFR = {
@@ -41,6 +71,16 @@ locales.frFR = {
 	COMMAND_FAILED = "La commande a échoué. Certaines fonctions peuvent manquer.",
 	DB_NEWER = "Les données viennent d'une version plus récente. Master Angler n'enregistre pas les changements.",
 	SETTINGS_UNAVAILABLE = "Le panneau d'options n'est pas disponible sur ce client.",
+	GEAR_SAVED = "Équipement de pêche enregistré : %d objets.",
+	NO_GEAR_SAVED = "Aucun équipement de pêche enregistré. Équipez-le et utilisez /masterangler savegear.",
+	SWAP_AFTER_COMBAT = "En combat. Le changement d'équipement aura lieu après le combat.",
+	SWAP_CANCELLED = "Le changement d'équipement en attente est annulé.",
+	MODE_ON = "Mode pêche activé.",
+	MODE_OFF = "Mode pêche désactivé.",
+	GEAR_MISSING = "Pas dans vos sacs : %s",
+	BAGS_FULL = "Sacs pleins. %s reste équipé.",
+	HELP_SAVEGEAR = "enregistrer l'équipement porté comme équipement de pêche",
+	HELP_MODE = "activer ou désactiver le mode pêche",
 }
 
 locales.itIT = {
@@ -51,6 +91,16 @@ locales.itIT = {
 	COMMAND_FAILED = "Il comando non è riuscito. Alcune funzioni possono mancare.",
 	DB_NEWER = "I dati salvati vengono da una versione più recente. Master Angler non salva le modifiche.",
 	SETTINGS_UNAVAILABLE = "Il pannello delle opzioni non è disponibile su questo client.",
+	GEAR_SAVED = "Set da pesca salvato: %d oggetti.",
+	NO_GEAR_SAVED = "Nessun set da pesca salvato. Indossa l'equipaggiamento e usa /masterangler savegear.",
+	SWAP_AFTER_COMBAT = "In combattimento. Il cambio di equipaggiamento avverrà a fine combattimento.",
+	SWAP_CANCELLED = "Il cambio di equipaggiamento in attesa è annullato.",
+	MODE_ON = "Modalità pesca attivata.",
+	MODE_OFF = "Modalità pesca disattivata.",
+	GEAR_MISSING = "Non è nelle tue borse: %s",
+	BAGS_FULL = "Borse piene. %s resta equipaggiato.",
+	HELP_SAVEGEAR = "salva l'equipaggiamento indossato come set da pesca",
+	HELP_MODE = "attiva o disattiva la modalità pesca",
 }
 
 locales.ptBR = {
@@ -61,6 +111,16 @@ locales.ptBR = {
 	COMMAND_FAILED = "O comando falhou. Algumas funções podem faltar.",
 	DB_NEWER = "Os dados salvos vêm de uma versão mais nova. O Master Angler não salva alterações.",
 	SETTINGS_UNAVAILABLE = "O painel de opções não está disponível neste cliente.",
+	GEAR_SAVED = "Conjunto de pesca salvo: %d itens.",
+	NO_GEAR_SAVED = "Nenhum conjunto de pesca salvo. Vista o equipamento e use /masterangler savegear.",
+	SWAP_AFTER_COMBAT = "Em combate. A troca de equipamento ocorre quando o combate acabar.",
+	SWAP_CANCELLED = "A troca de equipamento pendente foi cancelada.",
+	MODE_ON = "Modo de pesca ligado.",
+	MODE_OFF = "Modo de pesca desligado.",
+	GEAR_MISSING = "Não está nas suas bolsas: %s",
+	BAGS_FULL = "Bolsas cheias. %s continua equipado.",
+	HELP_SAVEGEAR = "salvar o equipamento vestido como conjunto de pesca",
+	HELP_MODE = "ligar ou desligar o modo de pesca",
 }
 
 locales.enGB = locales.enUS

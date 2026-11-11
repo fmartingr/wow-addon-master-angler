@@ -4,6 +4,8 @@ return {
 		"MasterAngler/Locales$",
 		"MasterAngler/Settings$",
 		"MasterAngler/Commands$",
+		"MasterAngler/Gear$",
+		"MasterAngler/Mode$",
 	},
 	reporter = "default",
 }

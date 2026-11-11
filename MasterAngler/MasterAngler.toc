@@ -16,3 +16,5 @@ Core.lua
 Locales.lua
 Settings.lua
 Commands.lua
+Gear.lua
+Mode.lua
