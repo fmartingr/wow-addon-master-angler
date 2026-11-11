@@ -3,7 +3,7 @@ local wow = require("spec.helpers.wow")
 describe("Settings", function()
 	local ns
 	before_each(function()
-		ns = wow.boot()
+		ns = wow.boot({ only = { "Core.lua", "Locales.lua", "Settings.lua", "Commands.lua" } })
 		_G.MasterAnglerDB = nil
 		ns.InitDB()
 	end)

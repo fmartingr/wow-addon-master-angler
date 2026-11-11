@@ -15,3 +15,7 @@ No check was run by the agent: the game client is not available to it.
 | MC7 | Toggle on, then `/reload`, then toggle off: the old gear returns | not run |
 | MC8 | Toggle on with a set item in the bank: one chat warning, the other slots equip | not run |
 | MC9 | Toggle with full bags and a two-handed pole: the offhand empties or one chat warning shows | not run |
+| MC10 | With fishing mode on, music and ambience go silent and the bobber splash is audible | not run |
+| MC11 | With fishing mode off, the sound values come back | not run |
+| MC12 | Exit the game with fishing mode on, log in, turn the mode off: the sound values come back | not run |
+| MC13 | Kill the client process with fishing mode on, log in with the mode off: the sound values come back | not run |

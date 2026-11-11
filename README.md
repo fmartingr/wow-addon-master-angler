@@ -6,6 +6,7 @@ Fishing quality of life addon for WoW Forever.
 
 - Fishing set: save the worn gear and swap to it with fishing mode. The old gear returns when the mode ends.
 - A swap asked in combat runs when combat ends.
+- Sound profile: fishing mode mutes music, ambience and dialog and raises effects. The old values return when the mode ends, also after a crash.
 
 ## Install
 
@@ -20,6 +21,12 @@ Use `make install` to copy the addon instead of a link.
 - `/masterangler` or `/masterangler help` lists all commands.
 - `/masterangler savegear` stores the worn gear as the fishing set.
 - `/masterangler mode` turns fishing mode on or off.
+
+## Sound profile notes
+
+- The profile can be turned off in the settings panel.
+- If you change a sound slider while fishing mode is on, the mode restores the old value when it ends.
+- The old values stay in `MasterAnglerDB.cvarBackup` until they are restored.
 
 ## Languages
 

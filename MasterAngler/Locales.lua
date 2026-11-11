@@ -21,6 +21,9 @@ locales.enUS = {
 	BAGS_FULL = "Bags are full. %s stays equipped.",
 	HELP_SAVEGEAR = "save the worn gear as the fishing set",
 	HELP_MODE = "turn fishing mode on or off",
+	SET_SOUND = "Sound profile in fishing mode",
+	SET_SOUND_TIP = "Mutes music, ambience and dialog and raises effects while fishing mode is on. The old values return when it ends.",
+	CVAR_FAILED = "The game did not accept the setting %s.",
 }
 
 locales.deDE = {
@@ -41,6 +44,9 @@ locales.deDE = {
 	BAGS_FULL = "Taschen voll. %s bleibt angelegt.",
 	HELP_SAVEGEAR = "getragene Ausrüstung als Angelset speichern",
 	HELP_MODE = "Angelmodus ein- oder ausschalten",
+	SET_SOUND = "Soundprofil im Angelmodus",
+	SET_SOUND_TIP = "Schaltet Musik, Umgebung und Dialoge stumm und erhöht Effekte im Angelmodus. Die alten Werte kommen danach zurück.",
+	CVAR_FAILED = "Das Spiel hat die Einstellung %s nicht akzeptiert.",
 }
 
 locales.esES = {
@@ -61,6 +67,9 @@ locales.esES = {
 	BAGS_FULL = "Bolsas llenas. %s sigue equipado.",
 	HELP_SAVEGEAR = "guardar el equipo puesto como equipo de pesca",
 	HELP_MODE = "activar o desactivar el modo pesca",
+	SET_SOUND = "Perfil de sonido en modo pesca",
+	SET_SOUND_TIP = "Silencia música, ambiente y diálogos y sube los efectos mientras el modo pesca está activo. Los valores anteriores vuelven al terminar.",
+	CVAR_FAILED = "El juego no aceptó el ajuste %s.",
 }
 
 locales.frFR = {
@@ -81,6 +90,9 @@ locales.frFR = {
 	BAGS_FULL = "Sacs pleins. %s reste équipé.",
 	HELP_SAVEGEAR = "enregistrer l'équipement porté comme équipement de pêche",
 	HELP_MODE = "activer ou désactiver le mode pêche",
+	SET_SOUND = "Profil sonore en mode pêche",
+	SET_SOUND_TIP = "Coupe la musique, l'ambiance et les dialogues et monte les effets en mode pêche. Les anciennes valeurs reviennent ensuite.",
+	CVAR_FAILED = "Le jeu a refusé le réglage %s.",
 }
 
 locales.itIT = {
@@ -101,6 +113,9 @@ locales.itIT = {
 	BAGS_FULL = "Borse piene. %s resta equipaggiato.",
 	HELP_SAVEGEAR = "salva l'equipaggiamento indossato come set da pesca",
 	HELP_MODE = "attiva o disattiva la modalità pesca",
+	SET_SOUND = "Profilo audio in modalità pesca",
+	SET_SOUND_TIP = "Silenzia musica, ambiente e dialoghi e alza gli effetti in modalità pesca. I vecchi valori tornano alla fine.",
+	CVAR_FAILED = "Il gioco non ha accettato l'impostazione %s.",
 }
 
 locales.ptBR = {
@@ -121,6 +136,9 @@ locales.ptBR = {
 	BAGS_FULL = "Bolsas cheias. %s continua equipado.",
 	HELP_SAVEGEAR = "salvar o equipamento vestido como conjunto de pesca",
 	HELP_MODE = "ligar ou desligar o modo de pesca",
+	SET_SOUND = "Perfil de som no modo de pesca",
+	SET_SOUND_TIP = "Silencia música, ambiente e diálogos e aumenta os efeitos no modo de pesca. Os valores antigos voltam ao terminar.",
+	CVAR_FAILED = "O jogo não aceitou a configuração %s.",
 }
 
 locales.enGB = locales.enUS

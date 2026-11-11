@@ -6,6 +6,8 @@ return {
 		"MasterAngler/Commands$",
 		"MasterAngler/Gear$",
 		"MasterAngler/Mode$",
+		"MasterAngler/CVars$",
+		"MasterAngler/Sound$",
 	},
 	reporter = "default",
 }

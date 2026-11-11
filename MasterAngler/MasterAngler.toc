@@ -18,3 +18,5 @@ Settings.lua
 Commands.lua
 Gear.lua
 Mode.lua
+CVars.lua
+Sound.lua

@@ -38,3 +38,5 @@ read_globals = {
 	"WorldFrame",
 	"issecretvalue",
 }
+
+files["MasterAngler/Locales.lua"] = { max_line_length = false }
