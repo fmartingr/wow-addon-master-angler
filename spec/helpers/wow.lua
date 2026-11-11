@@ -117,6 +117,8 @@ end
 
 function M.reset()
 	M.combat = false
+	M.loot = { fishing = false, slots = {} }
+	M.maps = { best = nil, info = {}, position = nil }
 	M.bindings = {}
 	M.now = 100
 	M.units = {}
@@ -197,8 +199,32 @@ function M.installStubs()
 		return M.locale or "enUS"
 	end
 	_G.hooksecurefunc = function() end
-	_G.Enum = { TooltipDataType = { Item = 0 }, ItemWeaponSubclass = { Fishingpole = 20 } }
+	_G.Enum = { TooltipDataType = { Item = 0 }, ItemWeaponSubclass = { Fishingpole = 20 }, UIMapType = { Zone = 3 } }
 	_G.UIParent = newFrame("UIParent")
+	_G.IsFishingLoot = function()
+		return M.loot.fishing
+	end
+	_G.GetNumLootItems = function()
+		return #M.loot.slots
+	end
+	_G.GetLootSlotLink = function(slot)
+		return M.loot.slots[slot] and M.loot.slots[slot].link
+	end
+	_G.GetLootSlotInfo = function(slot)
+		local entry = M.loot.slots[slot] or {}
+		return nil, nil, entry.quantity, nil, nil, nil, nil, nil, nil, entry.isCoin
+	end
+	_G.C_Map = {
+		GetBestMapForUnit = function()
+			return M.maps.best
+		end,
+		GetMapInfo = function(id)
+			return M.maps.info[id]
+		end,
+		GetPlayerMapPosition = function()
+			return M.maps.position
+		end,
+	}
 	_G.GetBindingKey = function(action)
 		local list = M.bindings[action] or {}
 		return list[1], list[2]

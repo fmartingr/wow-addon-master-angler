@@ -30,6 +30,8 @@ locales.enUS = {
 	SET_AUTOLURE_TIP = "Applies the strongest lure from your bags when the pole has none or less than 30 seconds left.",
 	SET_INTERACT = "Interact key casts",
 	SET_INTERACT_TIP = "With fishing mode on or a pole in hand, the Interact key applies a lure or casts. It does its normal action when the line is out, near NPCs and objects, with a window open, and in combat.",
+	STATS = "%d catches of %d different items.",
+	HELP_STATS = "show the number of recorded catches",
 }
 
 locales.deDE = {
@@ -59,6 +61,8 @@ locales.deDE = {
 	SET_AUTOLURE_TIP = "Trägt den stärksten Köder aus deinen Taschen auf, wenn die Angel keinen oder weniger als 30 Sekunden hat.",
 	SET_INTERACT = "Interaktionstaste wirft aus",
 	SET_INTERACT_TIP = "Mit Angelmodus oder Angel in der Hand trägt die Interaktionstaste einen Köder auf oder wirft aus. Sie tut ihre normale Aktion bei ausgeworfener Leine, bei NPCs und Objekten, bei offenem Fenster und im Kampf.",
+	STATS = "%d Fänge von %d verschiedenen Gegenständen.",
+	HELP_STATS = "Anzahl der gespeicherten Fänge anzeigen",
 }
 
 locales.esES = {
@@ -88,6 +92,8 @@ locales.esES = {
 	SET_AUTOLURE_TIP = "Aplica el mejor cebo de tus bolsas cuando la caña no tiene o le quedan menos de 30 segundos.",
 	SET_INTERACT = "La tecla de interacción lanza",
 	SET_INTERACT_TIP = "Con el modo pesca o una caña en la mano, la tecla de interacción aplica un cebo o lanza. Hace su acción normal con la línea echada, cerca de PNJ y objetos, con una ventana abierta y en combate.",
+	STATS = "%d capturas de %d objetos distintos.",
+	HELP_STATS = "mostrar el número de capturas registradas",
 }
 
 locales.frFR = {
@@ -117,6 +123,8 @@ locales.frFR = {
 	SET_AUTOLURE_TIP = "Applique le meilleur appât de vos sacs quand la canne n'en a pas ou qu'il reste moins de 30 secondes.",
 	SET_INTERACT = "La touche d'interaction lance",
 	SET_INTERACT_TIP = "En mode pêche ou avec une canne en main, la touche d'interaction applique un appât ou lance. Elle garde son action normale ligne lancée, près des PNJ et objets, fenêtre ouverte et en combat.",
+	STATS = "%d prises de %d objets différents.",
+	HELP_STATS = "afficher le nombre de prises enregistrées",
 }
 
 locales.itIT = {
@@ -146,6 +154,8 @@ locales.itIT = {
 	SET_AUTOLURE_TIP = "Applica l'esca migliore dalle tue borse quando la canna non ne ha o restano meno di 30 secondi.",
 	SET_INTERACT = "Il tasto Interagisci lancia",
 	SET_INTERACT_TIP = "In modalità pesca o con una canna in mano, il tasto Interagisci applica un'esca o lancia. Fa la sua azione normale con la lenza in acqua, vicino a PNG e oggetti, con una finestra aperta e in combattimento.",
+	STATS = "%d catture di %d oggetti diversi.",
+	HELP_STATS = "mostra il numero di catture registrate",
 }
 
 locales.ptBR = {
@@ -175,6 +185,8 @@ locales.ptBR = {
 	SET_AUTOLURE_TIP = "Aplica a melhor isca das suas bolsas quando a vara não tem ou restam menos de 30 segundos.",
 	SET_INTERACT = "A tecla de interação lança",
 	SET_INTERACT_TIP = "Com o modo de pesca ou uma vara na mão, a tecla de interação aplica uma isca ou lança. Ela faz a ação normal com a linha lançada, perto de NPCs e objetos, com uma janela aberta e em combate.",
+	STATS = "%d capturas de %d itens diferentes.",
+	HELP_STATS = "mostrar o número de capturas registradas",
 }
 
 locales.enGB = locales.enUS

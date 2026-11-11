@@ -23,3 +23,4 @@ Sound.lua
 Fishing.lua
 Cast.lua
 Interact.lua
+Catches.lua

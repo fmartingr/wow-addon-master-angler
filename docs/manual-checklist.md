@@ -35,3 +35,7 @@ No check was run by the agent: the game client is not available to it.
 | MC27 | With the pole in hand, the Interact override stays stable: no repeated `UPDATE_BINDINGS` loop (check `/etrace`) | not run |
 | MC28 | `/reload` with the line out: the Interact key still loots the bobber (spell ID is the 8th return of `UnitChannelInfo`) | not run |
 | MC29 | With the game menu, settings or key bindings open, the Interact key acts normally | not run |
+| MC30 | Catch a fish, then `/masterangler stats` shows one more catch | not run |
+| MC31 | `/dump MasterAnglerDB.chars["<Name-Realm>"].catches[#MasterAnglerDB.chars["<Name-Realm>"].catches]` shows the zone map ID and plausible x and y | not run |
+| MC32 | The loot of a mob corpse adds no row | not run |
+| MC33 | With full bags, a fishing catch that stays in the loot window adds no row | not run |

@@ -11,6 +11,7 @@ return {
 		"MasterAngler/Fishing$",
 		"MasterAngler/Cast$",
 		"MasterAngler/Interact$",
+		"MasterAngler/Catches$",
 	},
 	reporter = "default",
 }
