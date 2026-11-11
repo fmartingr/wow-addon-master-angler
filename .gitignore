@@ -1,0 +1,5 @@
+luacov.stats.out
+luacov.report.out
+.lua/
+.luarocks/
+.release/

@@ -1,0 +1,9 @@
+return {
+	include = {
+		"MasterAngler/Core$",
+		"MasterAngler/Locales$",
+		"MasterAngler/Settings$",
+		"MasterAngler/Commands$",
+	},
+	reporter = "default",
+}

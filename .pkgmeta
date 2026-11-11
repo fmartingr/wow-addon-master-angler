@@ -1,0 +1,22 @@
+package-as: MasterAngler
+manual-changelog:
+  filename: CHANGELOG.md
+  markup-type: markdown
+move-folders:
+  MasterAngler/MasterAngler: MasterAngler
+ignore:
+  - .github
+  - assets
+  - docs
+  - scripts
+  - spec
+  - specs
+  - Makefile
+  - README.md
+  - CHANGELOG.md
+  - LICENSE
+  - stylua.toml
+  - .styluaignore
+  - .luacheckrc
+  - .luacov
+  - .busted
