@@ -200,6 +200,22 @@ describe("Core", function()
 		end)
 	end)
 
+	describe("On with an unknown event", function()
+		it("reports once and still keeps the handler", function()
+			ns.events.RegisterEvent = function()
+				error("unknown event")
+			end
+			local ran = false
+			ns.On("NO_SUCH_EVENT", function()
+				ran = true
+			end)
+			ns.On("NO_SUCH_EVENT", function() end)
+			ns.events.scripts.OnEvent(ns.events, "NO_SUCH_EVENT")
+			assert.is_true(ran)
+			assert.equals(1, #_G.DEFAULT_CHAT_FRAME.lines)
+		end)
+	end)
+
 	describe("startup", function()
 		it("runs each function on PLAYER_LOGIN and survives an error", function()
 			local ran = 0

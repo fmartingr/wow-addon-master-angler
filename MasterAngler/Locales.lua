@@ -24,6 +24,10 @@ locales.enUS = {
 	SET_SOUND = "Sound profile in fishing mode",
 	SET_SOUND_TIP = "Mutes music, ambience and dialog and raises effects while fishing mode is on. The old values return when it ends.",
 	CVAR_FAILED = "The game did not accept the setting %s.",
+	SET_DOUBLECLICK = "Double right-click casts",
+	SET_DOUBLECLICK_TIP = "A double right-click on the game world applies a lure or casts Fishing. It works only with fishing mode on or a fishing pole in hand, and out of combat.",
+	SET_AUTOLURE = "Auto-lure",
+	SET_AUTOLURE_TIP = "Applies the strongest lure from your bags when the pole has none or less than 30 seconds left.",
 }
 
 locales.deDE = {
@@ -47,6 +51,10 @@ locales.deDE = {
 	SET_SOUND = "Soundprofil im Angelmodus",
 	SET_SOUND_TIP = "Schaltet Musik, Umgebung und Dialoge stumm und erhöht Effekte im Angelmodus. Die alten Werte kommen danach zurück.",
 	CVAR_FAILED = "Das Spiel hat die Einstellung %s nicht akzeptiert.",
+	SET_DOUBLECLICK = "Doppelter Rechtsklick wirft aus",
+	SET_DOUBLECLICK_TIP = "Ein doppelter Rechtsklick auf die Spielwelt trägt einen Köder auf oder wirft Angeln aus. Nur mit Angelmodus oder Angel in der Hand und außerhalb des Kampfes.",
+	SET_AUTOLURE = "Automatischer Köder",
+	SET_AUTOLURE_TIP = "Trägt den stärksten Köder aus deinen Taschen auf, wenn die Angel keinen oder weniger als 30 Sekunden hat.",
 }
 
 locales.esES = {
@@ -70,6 +78,10 @@ locales.esES = {
 	SET_SOUND = "Perfil de sonido en modo pesca",
 	SET_SOUND_TIP = "Silencia música, ambiente y diálogos y sube los efectos mientras el modo pesca está activo. Los valores anteriores vuelven al terminar.",
 	CVAR_FAILED = "El juego no aceptó el ajuste %s.",
+	SET_DOUBLECLICK = "Doble clic derecho lanza",
+	SET_DOUBLECLICK_TIP = "Un doble clic derecho en el mundo aplica un cebo o lanza Pesca. Solo con el modo pesca activo o una caña en la mano, y fuera de combate.",
+	SET_AUTOLURE = "Cebo automático",
+	SET_AUTOLURE_TIP = "Aplica el mejor cebo de tus bolsas cuando la caña no tiene o le quedan menos de 30 segundos.",
 }
 
 locales.frFR = {
@@ -93,6 +105,10 @@ locales.frFR = {
 	SET_SOUND = "Profil sonore en mode pêche",
 	SET_SOUND_TIP = "Coupe la musique, l'ambiance et les dialogues et monte les effets en mode pêche. Les anciennes valeurs reviennent ensuite.",
 	CVAR_FAILED = "Le jeu a refusé le réglage %s.",
+	SET_DOUBLECLICK = "Double clic droit pour lancer",
+	SET_DOUBLECLICK_TIP = "Un double clic droit sur le monde applique un appât ou lance Pêche. Seulement en mode pêche ou avec une canne en main, hors combat.",
+	SET_AUTOLURE = "Appât automatique",
+	SET_AUTOLURE_TIP = "Applique le meilleur appât de vos sacs quand la canne n'en a pas ou qu'il reste moins de 30 secondes.",
 }
 
 locales.itIT = {
@@ -116,6 +132,10 @@ locales.itIT = {
 	SET_SOUND = "Profilo audio in modalità pesca",
 	SET_SOUND_TIP = "Silenzia musica, ambiente e dialoghi e alza gli effetti in modalità pesca. I vecchi valori tornano alla fine.",
 	CVAR_FAILED = "Il gioco non ha accettato l'impostazione %s.",
+	SET_DOUBLECLICK = "Doppio clic destro lancia",
+	SET_DOUBLECLICK_TIP = "Un doppio clic destro sul mondo applica un'esca o lancia Pesca. Solo in modalità pesca o con una canna in mano, fuori combattimento.",
+	SET_AUTOLURE = "Esca automatica",
+	SET_AUTOLURE_TIP = "Applica l'esca migliore dalle tue borse quando la canna non ne ha o restano meno di 30 secondi.",
 }
 
 locales.ptBR = {
@@ -139,6 +159,10 @@ locales.ptBR = {
 	SET_SOUND = "Perfil de som no modo de pesca",
 	SET_SOUND_TIP = "Silencia música, ambiente e diálogos e aumenta os efeitos no modo de pesca. Os valores antigos voltam ao terminar.",
 	CVAR_FAILED = "O jogo não aceitou a configuração %s.",
+	SET_DOUBLECLICK = "Clique direito duplo lança",
+	SET_DOUBLECLICK_TIP = "Um clique direito duplo no mundo aplica uma isca ou lança Pesca. Só com o modo de pesca ligado ou uma vara na mão, fora de combate.",
+	SET_AUTOLURE = "Isca automática",
+	SET_AUTOLURE_TIP = "Aplica a melhor isca das suas bolsas quando a vara não tem ou restam menos de 30 segundos.",
 }
 
 locales.enGB = locales.enUS

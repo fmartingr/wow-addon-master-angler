@@ -4,7 +4,7 @@ local ADDON_NAME = "MasterAngler"
 local ADDON_DIR = "MasterAngler/"
 
 local function newFrame(name)
-	local frame = { name = name, calls = {}, scripts = {}, events = {}, shown = false, children = {} }
+	local frame = { name = name, calls = {}, scripts = {}, events = {}, shown = false, children = {}, attrs = {} }
 	local mt = {}
 	mt.__index = function(_, key)
 		if key == "GetName" then
@@ -12,7 +12,15 @@ local function newFrame(name)
 				return self.name
 			end
 		end
-		local known = { Show = true, Hide = true, IsShown = true, GetWidth = true, GetHeight = true, GetAlpha = true }
+		local known = {
+			Show = true,
+			Hide = true,
+			IsShown = true,
+			GetWidth = true,
+			GetHeight = true,
+			GetAlpha = true,
+			GetAttribute = true,
+		}
 		local prefixes = { "Set", "Register", "Unregister", "Create", "Enable", "Clear", "Add" }
 		local isMethod = known[key]
 		for _, prefix in ipairs(prefixes) do
@@ -28,6 +36,11 @@ local function newFrame(name)
 			if key == "SetScript" then
 				local event, fn = ...
 				self.scripts[event] = fn
+			elseif key == "SetAttribute" then
+				local attr, value = ...
+				self.attrs[attr] = value
+			elseif key == "GetAttribute" then
+				return self.attrs[(...)]
 			elseif key == "RegisterEvent" then
 				self.events[(...)] = true
 			elseif key == "UnregisterEvent" then
@@ -99,6 +112,15 @@ end
 
 function M.reset()
 	M.combat = false
+	M.now = 100
+	M.units = {}
+	M.knownSpells = {}
+	M.itemInfo = {}
+	M.tempEnchant = nil
+	M.overrides = {}
+	M.clearedOverrides = 0
+	M.mouseFocus = nil
+	M.mouselooking = false
 	M.worn = {}
 	M.itemCounts = {}
 	M.freeSlots = {}
@@ -168,8 +190,46 @@ function M.installStubs()
 		return M.locale or "enUS"
 	end
 	_G.hooksecurefunc = function() end
-	_G.Enum = { TooltipDataType = { Item = 0 } }
+	_G.Enum = { TooltipDataType = { Item = 0 }, ItemWeaponSubclass = { Fishingpole = 20 } }
+	_G.UIParent = newFrame("UIParent")
+	_G.GetTime = function()
+		return M.now
+	end
+	_G.IsMouselooking = function()
+		return M.mouselooking
+	end
+	_G.MouselookStop = function()
+		M.mouselooking = false
+	end
+	_G.UnitExists = function(unit)
+		return M.units[unit] == true
+	end
+	_G.IsPlayerSpell = function(id)
+		return M.knownSpells[id] == true
+	end
+	_G.GetInventoryItemID = function(_, slot)
+		return tonumber((M.worn[slot] or ""):match("item:(%d+)"))
+	end
+	_G.C_PaperDollInfo = {
+		GetTemporaryEnchantmentInfo = function()
+			return M.tempEnchant
+		end,
+	}
+	_G.SetOverrideBindingClick = function(owner, priority, key, name)
+		M.overrides[#M.overrides + 1] = { owner = owner, priority = priority, key = key, name = name }
+	end
+	_G.ClearOverrideBindings = function()
+		M.overrides = {}
+		M.clearedOverrides = M.clearedOverrides + 1
+	end
 	_G.C_Item = {
+		GetItemInfoInstant = function(id)
+			local info = M.itemInfo[id]
+			if not info then
+				return id
+			end
+			return id, nil, nil, nil, nil, info[1], info[2]
+		end,
 		EquipItemByName = function(link, slot)
 			M.equipCalls[#M.equipCalls + 1] = { link, slot }
 			M.worn[slot] = link

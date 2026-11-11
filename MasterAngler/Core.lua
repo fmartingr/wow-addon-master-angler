@@ -126,7 +126,9 @@ ns.events = CreateFrame("Frame")
 function ns.On(event, handler)
 	if not handlers[event] then
 		handlers[event] = {}
-		ns.events:RegisterEvent(event)
+		if not pcall(ns.events.RegisterEvent, ns.events, event) then
+			ns.ReportOnce("event-" .. event, ns.L.HOOK_FAILED)
+		end
 	end
 	table.insert(handlers[event], handler)
 end

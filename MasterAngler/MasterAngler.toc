@@ -20,3 +20,5 @@ Gear.lua
 Mode.lua
 CVars.lua
 Sound.lua
+Fishing.lua
+Cast.lua
