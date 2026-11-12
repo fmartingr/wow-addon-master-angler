@@ -20,6 +20,7 @@ local function newFrame(name)
 			GetHeight = true,
 			GetAlpha = true,
 			GetAttribute = true,
+			GetText = true,
 			HookScript = true,
 		}
 		local prefixes = { "Set", "Register", "Unregister", "Create", "Enable", "Clear", "Add" }
@@ -41,6 +42,12 @@ local function newFrame(name)
 				local event, fn = ...
 				self.hooks = self.hooks or {}
 				self.hooks[event] = fn
+			elseif key == "SetShown" then
+				self.shown = (...) and true or false
+			elseif key == "SetText" then
+				self.text = (...)
+			elseif key == "GetText" then
+				return self.text or ""
 			elseif key == "SetAttribute" then
 				local attr, value = ...
 				self.attrs[attr] = value

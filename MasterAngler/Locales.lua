@@ -48,6 +48,11 @@ locales.enUS = {
 	MODE_STATE_OFF = "Fishing mode: off",
 	SET_MINIMAP = "Show the minimap button",
 	SET_MINIMAP_TIP = "Left-click opens the journal. Right-click toggles fishing mode.",
+	SEARCH = "Search",
+	BACK = "Go back",
+	DETAIL_SEEN_IN = "Seen in:",
+	DETAIL_ZONE = "%s (%d)",
+	NO_MATCHES = "No fish match your search.",
 }
 
 locales.deDE = {
@@ -95,6 +100,11 @@ locales.deDE = {
 	MODE_STATE_OFF = "Angelmodus: aus",
 	SET_MINIMAP = "Minimap-Button anzeigen",
 	SET_MINIMAP_TIP = "Linksklick öffnet das Journal. Rechtsklick schaltet den Angelmodus um.",
+	SEARCH = "Suchen",
+	BACK = "Zurück",
+	DETAIL_SEEN_IN = "Gesehen in:",
+	DETAIL_ZONE = "%s (%d)",
+	NO_MATCHES = "Kein Fisch passt zu deiner Suche.",
 }
 
 locales.esES = {
@@ -142,6 +152,11 @@ locales.esES = {
 	MODE_STATE_OFF = "Modo pesca: desactivado",
 	SET_MINIMAP = "Mostrar el botón del minimapa",
 	SET_MINIMAP_TIP = "El clic izquierdo abre el diario. El clic derecho alterna el modo pesca.",
+	SEARCH = "Buscar",
+	BACK = "Volver",
+	DETAIL_SEEN_IN = "Visto en:",
+	DETAIL_ZONE = "%s (%d)",
+	NO_MATCHES = "Ningún pez coincide con tu búsqueda.",
 }
 
 locales.frFR = {
@@ -189,6 +204,11 @@ locales.frFR = {
 	MODE_STATE_OFF = "Mode pêche : désactivé",
 	SET_MINIMAP = "Afficher le bouton de la minicarte",
 	SET_MINIMAP_TIP = "Le clic gauche ouvre le journal. Le clic droit active ou désactive le mode pêche.",
+	SEARCH = "Rechercher",
+	BACK = "Retour",
+	DETAIL_SEEN_IN = "Vu à :",
+	DETAIL_ZONE = "%s (%d)",
+	NO_MATCHES = "Aucun poisson ne correspond à votre recherche.",
 }
 
 locales.itIT = {
@@ -236,6 +256,11 @@ locales.itIT = {
 	MODE_STATE_OFF = "Modalità pesca: disattiva",
 	SET_MINIMAP = "Mostra il pulsante della minimappa",
 	SET_MINIMAP_TIP = "Il clic sinistro apre il diario. Il clic destro attiva o disattiva la modalità pesca.",
+	SEARCH = "Cerca",
+	BACK = "Indietro",
+	DETAIL_SEEN_IN = "Visto in:",
+	DETAIL_ZONE = "%s (%d)",
+	NO_MATCHES = "Nessun pesce corrisponde alla ricerca.",
 }
 
 locales.ptBR = {
@@ -283,6 +308,11 @@ locales.ptBR = {
 	MODE_STATE_OFF = "Modo de pesca: desligado",
 	SET_MINIMAP = "Mostrar o botão do minimapa",
 	SET_MINIMAP_TIP = "O clique esquerdo abre o diário. O clique direito alterna o modo de pesca.",
+	SEARCH = "Buscar",
+	BACK = "Voltar",
+	DETAIL_SEEN_IN = "Visto em:",
+	DETAIL_ZONE = "%s (%d)",
+	NO_MATCHES = "Nenhum peixe corresponde à busca.",
 }
 
 locales.enGB = locales.enUS

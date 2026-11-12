@@ -3,8 +3,8 @@ local _, ns = ...
 ns.Journal = {}
 local Journal = ns.Journal
 
-local function sortPage(page)
-	table.sort(page, function(a, b)
+local function sortFish(fish)
+	table.sort(fish, function(a, b)
 		if a.mine ~= b.mine then
 			return a.mine
 		end
@@ -15,7 +15,43 @@ local function sortPage(page)
 	end)
 end
 
-local function addRow(pages, row, isMine)
+local function sortZones(zones)
+	table.sort(zones, function(a, b)
+		if a.count ~= b.count then
+			return a.count > b.count
+		end
+		return a.mapID < b.mapID
+	end)
+end
+
+local function entryFor(byItem, itemID)
+	local entry = byItem[itemID]
+	if not entry then
+		entry = { itemID = itemID, mine = false }
+		byItem[itemID] = entry
+	end
+	return entry
+end
+
+local function addMine(entry, mapID, quantity, time)
+	if not entry.mine then
+		entry.mine, entry.count, entry.first, entry.last, entry.zones = true, 0, time, time, {}
+	end
+	entry.count = entry.count + quantity
+	entry.first = math.min(entry.first, time)
+	entry.last = math.max(entry.last, time)
+	for _, zone in ipairs(entry.zones) do
+		if zone.mapID == mapID then
+			zone.count = zone.count + quantity
+			zone.first = math.min(zone.first, time)
+			zone.last = math.max(zone.last, time)
+			return
+		end
+	end
+	entry.zones[#entry.zones + 1] = { mapID = mapID, count = quantity, first = time, last = time }
+end
+
+local function addRow(byItem, row, isMine)
 	if type(row) ~= "table" then
 		return
 	end
@@ -24,54 +60,30 @@ local function addRow(pages, row, isMine)
 	if type(itemID) ~= "number" or type(mapID) ~= "number" then
 		return
 	end
-	pages[mapID] = pages[mapID] or {}
-	local entry = pages[mapID][itemID]
-	if not entry then
-		entry = { itemID = itemID, mine = false }
-		pages[mapID][itemID] = entry
-	end
-	if not isMine then
-		return
-	end
-	local quantity = tonumber(row[ns.Catches.QTY]) or 1
-	local time = tonumber(row[ns.Catches.TIME]) or 0
-	if not entry.mine then
-		entry.mine, entry.count, entry.first, entry.last = true, 0, time, time
-	end
-	entry.count = entry.count + quantity
-	-- A time of 0 means the server time was unknown, so it never replaces a real first catch.
-	if time > 0 then
-		entry.first = entry.first > 0 and math.min(entry.first, time) or time
-		entry.last = math.max(entry.last, time)
+	local entry = entryFor(byItem, itemID)
+	if isMine then
+		addMine(entry, mapID, tonumber(row[ns.Catches.QTY]) or 1, tonumber(row[ns.Catches.TIME]) or 0)
 	end
 end
 
+--- One entry for each item that any character caught. An item that the current character caught has its
+--- totals and its zones. An item that only other characters caught has no data (shown as ???).
 function Journal.Build(chars, currentKey)
-	local keyed = {}
+	local byItem = {}
 	for key, char in pairs(type(chars) == "table" and chars or {}) do
 		if type(char) == "table" and type(char.catches) == "table" then
 			for _, row in ipairs(char.catches) do
-				addRow(keyed, row, key == currentKey)
+				addRow(byItem, row, key == currentKey)
 			end
 		end
 	end
-	local result = { zones = {}, pages = {} }
-	for mapID, items in pairs(keyed) do
-		local page, mine, alts = {}, 0, 0
-		for _, entry in pairs(items) do
-			page[#page + 1] = entry
-			if entry.mine then
-				mine = mine + 1
-			else
-				alts = alts + 1
-			end
+	local fish = {}
+	for _, entry in pairs(byItem) do
+		fish[#fish + 1] = entry
+		if entry.zones then
+			sortZones(entry.zones)
 		end
-		sortPage(page)
-		result.pages[mapID] = page
-		result.zones[#result.zones + 1] = { mapID = mapID, mine = mine, alts = alts }
 	end
-	table.sort(result.zones, function(a, b)
-		return a.mapID < b.mapID
-	end)
-	return result
+	sortFish(fish)
+	return { fish = fish, byItem = byItem }
 end

@@ -41,11 +41,12 @@ No check was run by the agent: the game client is not available to it.
 | MC32 | The loot of a mob corpse adds no row | not run |
 | MC33 | With full bags, a fishing catch that stays in the loot window adds no row | not run |
 | MC34 | The minimap button shows, drags and keeps its place after `/reload` | not run |
-| MC35 | Left-click on the minimap button opens the journal on the current zone | not run |
+| MC35 | Left-click on the minimap button opens the journal with the fish list in four columns | not run |
 | MC36 | Right-click on the minimap button toggles fishing mode | not run |
-| MC37 | A caught item shows with icon, name and count | not run |
-| MC38 | The hover on a caught item shows the first and last catch | not run |
+| MC37 | A caught fish shows with icon and name | not run |
+| MC38 | A click on a fish opens its detail with totals, first and last catch, and the zones where it was caught | not run |
 | MC39 | On an alt, the fish of the main character show as `???` | not run |
+| MC46 | The search box filters the list, and "Go back" from a detail keeps the filtered results | not run |
 | MC40 | Escape closes the journal window | not run |
 | MC41 | The journal window looks like a Blizzard panel | not run |
 | MC42 | `/masterangler minimap` and the settings checkbox hide and show the button together | not run |

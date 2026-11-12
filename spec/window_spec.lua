@@ -1,34 +1,47 @@
 local wow = require("spec.helpers.wow")
 
+local T0 = 1700000000
+
 describe("Window", function()
-	local ns
+	local ns, created
+	local NAMES
+
 	before_each(function()
+		NAMES = { [1] = "Bass", [2] = "Carp", [3] = "Angelfish" }
 		ns = wow.boot()
 		_G.MasterAnglerDB = nil
 		ns.InitDB()
-		wow.maps.best = 20
-		wow.maps.info[20] = { mapType = 3, parentMapID = 10, name = "Zeta Zone" }
-		wow.maps.info[30] = { mapType = 3, parentMapID = 10, name = "Alpha Zone" }
+		wow.maps.info[20] = { mapType = 3, name = "Zeta Zone" }
+		wow.maps.info[30] = { mapType = 3, name = "Alpha Zone" }
 		_G.C_Item.GetItemIconByID = function(id)
 			return 1000 + id
 		end
 		_G.C_Item.GetItemNameByID = function(id)
-			return "Fish " .. id
+			return NAMES[id]
 		end
 		MasterAnglerDB.chars["Tester-Realm"] = {
 			catches = {
-				{ 1, 20, 1, 1, 1700000000, 0, 2 },
-				{ 1, 20, 1, 1, 1700003600, 0, 1 },
-				{ 2, 30, 1, 1, 1700000000, 0, 1 },
+				{ 1, 20, 1, 1, T0, 0, 2 },
+				{ 1, 20, 1, 1, T0 + 3600, 0, 1 },
+				{ 1, 30, 1, 1, T0 + 60, 0, 1 },
+				{ 2, 30, 1, 1, T0, 0, 1 },
+				{ 3, 20, 1, 1, T0, 0, 1 },
 			},
 		}
 		MasterAnglerDB.chars["Alt-Realm"] = { catches = { { 9, 20, 1, 1, 1, 0, 1 } } }
+		local base = _G.CreateFrame
+		created = {}
+		_G.CreateFrame = function(kind, name, parent, template)
+			local made = base(kind, name, parent, template)
+			created[#created + 1] = { frame = made, kind = kind, parent = parent, template = template }
+			return made
+		end
 	end)
 	after_each(function()
 		wow.restore()
 	end)
 
-	local function frameOf()
+	local function window()
 		return _G.MasterAnglerJournal
 	end
 
@@ -36,11 +49,47 @@ describe("Window", function()
 		return "Interface\\Icons\\INV_Misc_QuestionMark"
 	end
 
+	local function lastCall(target, name)
+		local result
+		for _, call in ipairs(target.calls) do
+			if call[1] == name then
+				result = call
+			end
+		end
+		return result
+	end
+
+	local function cellFrames()
+		local found = {}
+		for _, entry in ipairs(created) do
+			if entry.parent == window().listContent and entry.kind == "Button" then
+				found[#found + 1] = entry.frame
+			end
+		end
+		return found
+	end
+
+	local function backButton()
+		for _, entry in ipairs(created) do
+			if entry.template == "UIPanelButtonTemplate" then
+				return entry.frame
+			end
+		end
+	end
+
+	local function names(rows)
+		local list = {}
+		for _, row in ipairs(rows) do
+			list[#list + 1] = row.name
+		end
+		return list
+	end
+
 	it("Toggle creates the window, shows and hides it", function()
 		ns.Window.Toggle()
-		assert.is_true(frameOf():IsShown())
+		assert.is_true(window():IsShown())
 		ns.Window.Toggle()
-		assert.is_false(frameOf():IsShown())
+		assert.is_false(window():IsShown())
 	end)
 
 	it("registers Escape through UISpecialFrames, once", function()
@@ -55,17 +104,18 @@ describe("Window", function()
 		assert.equals(1, count)
 	end)
 
-	it("falls back to the basic template when ButtonFrameTemplate fails", function()
-		local templates = {}
-		_G.CreateFrame = function(_, name, _, template)
-			templates[#templates + 1] = template
-			if template == "ButtonFrameTemplate" then
+	it("falls back to the basic templates when the new ones fail", function()
+		local base = _G.CreateFrame
+		_G.CreateFrame = function(kind, name, parent, template)
+			if template == "ButtonFrameTemplate" or template == "SearchBoxTemplate" then
 				error("no template")
 			end
-			return wow.newFrame(name)
+			return base(kind, name, parent, template)
 		end
-		ns.Window.Create()
-		assert.equals("BasicFrameTemplateWithInset", templates[2])
+		assert.has_no.errors(function()
+			ns.Window.Toggle()
+		end)
+		assert.is_true(window():IsShown())
 	end)
 
 	it("runs without the portrait helper", function()
@@ -75,300 +125,372 @@ describe("Window", function()
 		end)
 	end)
 
-	it("sorts the zones by name and opens on the current zone", function()
-		local model = ns.Window.BuildModel()
-		assert.equals("Alpha Zone", model.zones[1].name)
-		assert.equals("Zeta Zone", model.zones[2].name)
-		assert.equals(20, model.selected)
-	end)
-
-	it("opens on the first zone when the current zone has no catches", function()
-		wow.maps.best = 99
-		local model = ns.Window.BuildModel()
-		assert.equals(30, model.selected)
-	end)
-
-	it("names a zone without map info by its ID", function()
-		wow.maps.info[30] = nil
-		local model = ns.Window.BuildModel()
-		local names = {}
-		for _, zone in ipairs(model.zones) do
-			names[#names + 1] = zone.name
+	it("retries the build after a failure instead of reusing a half-built window", function()
+		local base = _G.CreateFrame
+		_G.CreateFrame = function(kind, name, parent, template)
+			if template == "UIPanelButtonTemplate" then
+				error("boom")
+			end
+			return base(kind, name, parent, template)
 		end
-		assert.is_truthy(table.concat(names, "|"):find("Zone 30", 1, true))
+		assert.has_error(function()
+			ns.Window.Create()
+		end)
+		_G.CreateFrame = base
+		assert.has_no.errors(function()
+			ns.Window.Toggle()
+		end)
+		assert.is_true(window():IsShown())
 	end)
 
-	it("lists caught items with icon, name and count and ??? rows with the question icon", function()
-		local model = ns.Window.BuildModel()
-		assert.equals(2, #model.rows)
-		assert.same(
-			{ itemID = 1, mine = true, count = 3, first = 1700000000, last = 1700003600, name = "Fish 1", icon = 1001 },
-			model.rows[1]
-		)
-		assert.equals("???", model.rows[2].name)
-		assert.equals(question(), model.rows[2].icon)
-		assert.is_false(model.rows[2].mine)
-	end)
+	describe("model", function()
+		it("lists the fish by name, then the alt-only fish as ???", function()
+			local model = ns.Window.BuildModel()
+			assert.equals("list", model.view)
+			assert.same({ "Angelfish", "Bass", "Carp", "???" }, names(model.rows))
+			assert.equals(1001, model.rows[2].icon)
+			assert.equals(question(), model.rows[4].icon)
+			assert.is_false(model.rows[4].mine)
+		end)
 
-	it("falls back to the question icon when the client has no icon API", function()
-		_G.C_Item.GetItemIconByID = nil
-		assert.equals(question(), ns.Window.BuildModel().rows[1].icon)
-	end)
+		it("sorts names without regard to case", function()
+			NAMES[2] = "carp"
+			NAMES[1] = "Bass"
+			assert.same({ "Angelfish", "Bass", "carp", "???" }, names(ns.Window.BuildModel().rows))
+		end)
 
-	it("shows ... for an uncached item name, and requests it once", function()
-		local requests = {}
-		_G.C_Item.GetItemNameByID = function()
-			return nil
-		end
-		_G.C_Item.RequestLoadItemDataByID = function(id)
-			requests[#requests + 1] = id
-		end
-		assert.equals("...", ns.Window.BuildModel().rows[1].name)
-		ns.Window.BuildModel()
-		assert.same({ 1 }, requests)
-	end)
+		it("filters by a case-insensitive part of the name and hides the ??? entries", function()
+			ns.Window.SetSearch("  AN ")
+			assert.same({ "Angelfish" }, names(ns.Window.BuildModel().rows))
+			ns.Window.SetSearch("s")
+			assert.same({ "Angelfish", "Bass" }, names(ns.Window.BuildModel().rows))
+		end)
 
-	it("shows ... without the name API", function()
-		_G.C_Item.GetItemNameByID = nil
-		assert.equals("...", ns.Window.BuildModel().rows[1].name)
-	end)
+		it("treats pattern characters in the search as plain text", function()
+			ns.Window.SetSearch(".*")
+			local model = ns.Window.BuildModel()
+			assert.equals(0, #model.rows)
+			assert.is_true(model.noMatches)
+		end)
 
-	it("Select changes the page and a reopen returns to the current zone", function()
-		ns.Window.Toggle()
-		ns.Window.Select(30)
-		assert.equals(30, frameOf().model.selected)
-		assert.equals(1, #frameOf().model.rows)
-		ns.Window.Toggle()
-		ns.Window.Toggle()
-		assert.equals(20, frameOf().model.selected)
-	end)
+		it("reports no matches only when there are catches", function()
+			ns.Window.SetSearch("zzz")
+			assert.is_true(ns.Window.BuildModel().noMatches)
+			MasterAnglerDB.chars = {}
+			local model = ns.Window.BuildModel()
+			assert.is_true(model.noCatches)
+			assert.is_false(model.noMatches)
+		end)
 
-	it("Select on a hidden window does not render", function()
-		ns.Window.Create()
-		assert.is_false(ns.Window.Select(30))
-		assert.is_nil(frameOf().model)
+		it("shows ... for an uncached name, sorts it last among mine and requests it once", function()
+			local requests = {}
+			NAMES[2] = nil
+			_G.C_Item.RequestLoadItemDataByID = function(id)
+				requests[#requests + 1] = id
+			end
+			assert.same({ "Angelfish", "Bass", "...", "???" }, names(ns.Window.BuildModel().rows))
+			ns.Window.BuildModel()
+			assert.same({ 2 }, requests)
+		end)
+
+		it("works without the name and icon APIs", function()
+			_G.C_Item.GetItemNameByID = nil
+			_G.C_Item.GetItemIconByID = nil
+			local model = ns.Window.BuildModel()
+			assert.equals("...", model.rows[1].name)
+			assert.equals(question(), model.rows[1].icon)
+		end)
+
+		it("reads no character data in read-only mode", function()
+			ns.readOnly = true
+			local model = ns.Window.BuildModel()
+			assert.is_true(model.noCatches)
+			assert.equals(0, #model.rows)
+		end)
+
+		it("builds the detail of a fish: totals and the zones it was seen in, most caught first", function()
+			ns.Window.ShowDetail(1)
+			local model = ns.Window.BuildModel()
+			assert.equals("detail", model.view)
+			local detail = model.detail
+			assert.equals("Bass", detail.name)
+			assert.equals(1001, detail.icon)
+			assert.equals(4, detail.count)
+			assert.equals(T0, detail.first)
+			assert.equals(T0 + 3600, detail.last)
+			assert.equals(2, #detail.zones)
+			assert.same({ mapID = 20, name = "Zeta Zone", count = 3, last = T0 + 3600 }, detail.zones[1])
+			assert.same({ mapID = 30, name = "Alpha Zone", count = 1, last = T0 + 60 }, detail.zones[2])
+		end)
+
+		it("names a zone without map info by its ID", function()
+			wow.maps.info[20] = nil
+			ns.Window.ShowDetail(1)
+			assert.equals("Zone 20", ns.Window.BuildModel().detail.zones[1].name)
+		end)
+
+		it("falls back to the list for an unknown fish or an alt-only fish", function()
+			ns.Window.ShowDetail(9)
+			assert.equals("list", ns.Window.BuildModel().view)
+			ns.Window.ShowDetail(12345)
+			assert.equals("list", ns.Window.BuildModel().view)
+		end)
+
+		it("going back from a detail keeps the filtered results", function()
+			ns.Window.SetSearch("an")
+			ns.Window.ShowDetail(3)
+			assert.equals("detail", ns.Window.BuildModel().view)
+			ns.Window.Back()
+			local model = ns.Window.BuildModel()
+			assert.equals("list", model.view)
+			assert.equals("an", model.query)
+			assert.same({ "Angelfish" }, names(model.rows))
+		end)
 	end)
 
 	describe("rendering", function()
-		local created
-		before_each(function()
-			local base = _G.CreateFrame
-			created = {}
-			_G.CreateFrame = function(kind, name, parent, template)
-				local created_frame = base(kind, name, parent, template)
-				if kind == "Button" then
-					created[#created + 1] = { frame = created_frame, parent = parent }
-				end
-				return created_frame
+		it("lays the fish out in four columns with icon and name", function()
+			MasterAnglerDB.chars["Tester-Realm"].catches[#MasterAnglerDB.chars["Tester-Realm"].catches + 1] =
+				{ 4, 20, 1, 1, T0, 0, 1 }
+			NAMES[4] = "Dace"
+			ns.Window.Toggle()
+			local cells = cellFrames()
+			assert.equals(5, #cells)
+			local expected = { { 0, 0 }, { 146, 0 }, { 292, 0 }, { 438, 0 }, { 0, -28 } }
+			for i, cell in ipairs(cells) do
+				local point = lastCall(cell, "SetPoint")
+				assert.same(expected[i], { point[5], point[6] }, "cell " .. i)
 			end
+			assert.equals("Angelfish", lastCall(cells[1].name, "SetText")[2])
+			assert.equals(1003, lastCall(cells[1].icon, "SetTexture")[2])
 		end)
 
-		local function buttons(parent)
-			local found = {}
-			for _, entry in ipairs(created) do
-				if entry.parent == parent then
-					found[#found + 1] = entry.frame
-				end
-			end
-			return found
-		end
-
-		local function lastCall(target, name)
-			local result
-			for _, call in ipairs(target.calls) do
-				if call[1] == name then
-					result = call
-				end
-			end
-			return result
-		end
-
-		it("a caught row shows the icon, name and count, and the hover shows the item and the catch dates", function()
+		it("a ??? cell shows the question icon, grey text, no tooltip and no detail", function()
 			ns.Window.Toggle()
-			local row = buttons(frameOf().itemContent)[1]
-			assert.equals(1001, lastCall(row.icon, "SetTexture")[2])
-			assert.equals("Fish 1", lastCall(row.name, "SetText")[2])
-			assert.equals(3, lastCall(row.count, "SetText")[2])
-			row.scripts.OnEnter(row)
+			local cell = cellFrames()[4]
+			assert.equals(question(), lastCall(cell.icon, "SetTexture")[2])
+			assert.equals("???", lastCall(cell.name, "SetText")[2])
+			local color = lastCall(cell.name, "SetTextColor")
+			assert.same({ 0.6, 0.6, 0.6 }, { color[2], color[3], color[4] })
+			cell.scripts.OnEnter(cell)
+			assert.is_false(_G.GameTooltip.shown)
+			cell.scripts.OnClick(cell)
+			assert.equals("list", window().model.view)
+		end)
+
+		it("the hover on a caught fish shows its item tooltip", function()
+			ns.Window.Toggle()
+			local cell = cellFrames()[2]
+			cell.scripts.OnEnter(cell)
 			assert.is_true(_G.GameTooltip.shown)
 			assert.equals(1, _G.GameTooltip.itemID)
-			assert.equals("Caught: 3", _G.GameTooltip.lines[1])
-			assert.equals("First catch: " .. os.date("%Y-%m-%d %H:%M", 1700000000), _G.GameTooltip.lines[2])
-			assert.equals("Last catch: " .. os.date("%Y-%m-%d %H:%M", 1700003600), _G.GameTooltip.lines[3])
-			row.scripts.OnLeave(row)
+			cell.scripts.OnLeave(cell)
 			assert.is_false(_G.GameTooltip.shown)
 		end)
 
-		it("a ??? row shows the question icon, the text ??? and no tooltip", function()
+		it("a redraw re-shows the tooltip of the hovered cell with its new item", function()
 			ns.Window.Toggle()
-			local row = buttons(frameOf().itemContent)[2]
-			assert.equals(question(), lastCall(row.icon, "SetTexture")[2])
-			assert.equals("???", lastCall(row.name, "SetText")[2])
-			local color = lastCall(row.name, "SetTextColor")
-			assert.same({ 0.6, 0.6, 0.6 }, { color[2], color[3], color[4] })
-			row.scripts.OnEnter(row)
-			assert.is_false(_G.GameTooltip.shown)
+			local cell = cellFrames()[1]
+			cell.scripts.OnEnter(cell)
+			ns.Window.SetSearch("carp")
+			assert.equals(2, _G.GameTooltip.itemID)
+			assert.is_true(_G.GameTooltip.shown)
 		end)
 
-		it("a zone button selects its page", function()
+		it("clicking a fish opens its detail in the same window and hides the list and the search", function()
 			ns.Window.Toggle()
-			local zone = buttons(frameOf().zoneContent)[1]
-			assert.equals(30, zone.mapID)
-			zone.scripts.OnClick(zone)
-			assert.equals(30, frameOf().model.selected)
+			local cell = cellFrames()[2]
+			cell.scripts.OnClick(cell)
+			assert.equals("detail", window().model.view)
+			assert.is_true(window().detail:IsShown())
+			assert.is_false(window().listScroll:IsShown())
+			assert.is_false(window().search:IsShown())
+			local panel = window().detail
+			assert.equals("Bass", lastCall(panel.name, "SetText")[2])
+			assert.equals("Caught: 4", lastCall(panel.count, "SetText")[2])
+			assert.equals("First catch: " .. os.date("%Y-%m-%d %H:%M", T0), lastCall(panel.first, "SetText")[2])
+			assert.equals("Last catch: " .. os.date("%Y-%m-%d %H:%M", T0 + 3600), lastCall(panel.last, "SetText")[2])
 		end)
 
-		it("hides the spare rows when a page is shorter", function()
+		it("lists the zones of the fish in the detail", function()
 			ns.Window.Toggle()
-			ns.Window.Select(30)
-			local rows = buttons(frameOf().itemContent)
+			ns.Window.ShowDetail(1)
+			local rows = {}
+			for _, entry in ipairs(created) do
+				if entry.parent == window().detail.zoneContent then
+					rows[#rows + 1] = entry.frame
+				end
+			end
+			assert.equals(2, #rows)
+			assert.equals("Zeta Zone (3)", lastCall(rows[1].name, "SetText")[2])
+			assert.equals("Alpha Zone (1)", lastCall(rows[2].name, "SetText")[2])
+			assert.equals(os.date("%Y-%m-%d %H:%M", T0 + 3600), lastCall(rows[1].last, "SetText")[2])
+		end)
+
+		it("hides the spare zone rows when the next fish was seen in fewer zones", function()
+			ns.Window.Toggle()
+			ns.Window.ShowDetail(1)
+			ns.Window.ShowDetail(3)
+			local rows = {}
+			for _, entry in ipairs(created) do
+				if entry.parent == window().detail.zoneContent then
+					rows[#rows + 1] = entry.frame
+				end
+			end
 			assert.is_true(rows[1].shown)
 			assert.is_false(rows[2].shown)
 		end)
 
-		it("an empty journal shows the empty text", function()
-			MasterAnglerDB.chars = {}
+		it("the Go back button returns to the list with the filter kept", function()
 			ns.Window.Toggle()
-			assert.equals("No catches yet. Go fishing!", lastCall(frameOf().empty, "SetText")[2])
-			assert.equals(0, #frameOf().model.zones)
+			window().search:SetText("an")
+			window().search.scripts.OnTextChanged(window().search)
+			local cell = cellFrames()[1]
+			cell.scripts.OnClick(cell)
+			assert.equals("detail", window().model.view)
+			backButton().scripts.OnClick(backButton())
+			assert.equals("list", window().model.view)
+			assert.is_true(window().search:IsShown())
+			assert.is_true(window().listScroll:IsShown())
+			assert.equals("an", window().search:GetText())
+			assert.same({ "Angelfish" }, names(window().model.rows))
+			assert.is_false(cellFrames()[2].shown)
 		end)
 
-		it("a catch event redraws only while the window is shown", function()
+		it("typing in the search box filters the list", function()
+			ns.Window.Toggle()
+			window().search:SetText("carp")
+			window().search.scripts.OnTextChanged(window().search)
+			assert.same({ "Carp" }, names(window().model.rows))
+			assert.is_false(cellFrames()[2].shown)
+		end)
+
+		it("Escape in the search box only drops its focus", function()
+			ns.Window.Create()
+			local box = window().search
+			box.scripts.OnEscapePressed(box)
+			assert.is_truthy(lastCall(box, "ClearFocus"))
+			assert.is_false(window():IsShown())
+		end)
+
+		it("SetSearch writes the text into the box and ignores an unchanged text", function()
+			ns.Window.Toggle()
+			assert.is_true(ns.Window.SetSearch("bass"))
+			assert.equals("bass", window().search:GetText())
+			assert.is_false(ns.Window.SetSearch("bass"))
+			assert.is_true(ns.Window.SetSearch(nil))
+			assert.equals("", window().search:GetText())
+		end)
+
+		it("SetSearch before the window exists stores the text without drawing", function()
+			assert.is_false(ns.Window.SetSearch("bass"))
+			assert.equals("bass", ns.Window.BuildModel().query)
+		end)
+
+		it("a reopen starts on the list with an empty search", function()
+			ns.Window.Toggle()
+			ns.Window.SetSearch("an")
+			ns.Window.ShowDetail(3)
+			ns.Window.Toggle()
+			ns.Window.Toggle()
+			assert.equals("list", window().model.view)
+			assert.equals("", window().search:GetText())
+			assert.equals(4, #window().model.rows)
+		end)
+
+		it("shows the empty text for an empty journal, the no-match text and the read-only text", function()
+			MasterAnglerDB.chars = {}
+			ns.Window.Toggle()
+			assert.equals("No catches yet. Go fishing!", lastCall(window().empty, "SetText")[2])
+			ns.readOnly = true
+			ns.Window.Refresh()
+			assert.is_truthy(lastCall(window().empty, "SetText")[2]:find("newer version", 1, true))
+			ns.readOnly = false
+			MasterAnglerDB.chars["Tester-Realm"] = { catches = { { 1, 20, 1, 1, T0, 0, 1 } } }
+			ns.Window.SetSearch("zzz")
+			assert.equals("No fish match your search.", lastCall(window().empty, "SetText")[2])
+			ns.Window.SetSearch("")
+			assert.equals("", lastCall(window().empty, "SetText")[2])
+		end)
+
+		it("hides the spare cells when the list gets shorter", function()
+			ns.Window.Toggle()
+			ns.Window.SetSearch("carp")
+			local cells = cellFrames()
+			assert.is_true(cells[1].shown)
+			assert.is_false(cells[2].shown)
+		end)
+	end)
+
+	describe("redraw events", function()
+		local function fire(event, ...)
+			ns.events.scripts.OnEvent(ns.events, event, ...)
+		end
+
+		it("a catch redraws only while the window is shown", function()
 			ns.Window.Create()
 			wow.loot.fishing = true
 			wow.loot.slots = { { link = wow.itemLink(5), quantity = 1 } }
-			ns.events.scripts.OnEvent(ns.events, "LOOT_OPENED")
-			ns.events.scripts.OnEvent(ns.events, "LOOT_SLOT_CLEARED", 1)
+			fire("LOOT_OPENED")
+			fire("LOOT_SLOT_CLEARED", 1)
 			wow.runTimers()
-			assert.is_nil(frameOf().model)
+			assert.is_nil(window().model)
 			ns.Window.Toggle()
-			assert.equals(3, #frameOf().model.rows)
-			wow.loot.slots = {
-				{ link = wow.itemLink(6), quantity = 1 },
-				{ link = wow.itemLink(7), quantity = 1 },
-			}
-			ns.events.scripts.OnEvent(ns.events, "LOOT_OPENED")
+			assert.equals(5, #window().model.rows)
+			wow.loot.slots = { { link = wow.itemLink(6), quantity = 1 } }
+			fire("LOOT_OPENED")
+			fire("LOOT_SLOT_CLEARED", 1)
 			wow.runTimers()
+			assert.equals(6, #window().model.rows)
+		end)
+
+		it("a burst of catches redraws once per frame", function()
+			ns.Window.Toggle()
+			wow.loot.fishing = true
+			wow.loot.slots = { { link = wow.itemLink(5), quantity = 1 }, { link = wow.itemLink(6), quantity = 1 } }
+			fire("LOOT_OPENED")
 			local before = #wow.timers
-			ns.events.scripts.OnEvent(ns.events, "LOOT_SLOT_CLEARED", 1)
-			ns.events.scripts.OnEvent(ns.events, "LOOT_SLOT_CLEARED", 2)
+			fire("LOOT_SLOT_CLEARED", 1)
+			fire("LOOT_SLOT_CLEARED", 2)
+			assert.equals(before + 1, #wow.timers)
+		end)
+
+		it("GET_ITEM_INFO_RECEIVED redraws only for a name the window asked for, once", function()
+			NAMES[2] = nil
+			ns.Window.Toggle()
+			NAMES[2] = "Carp"
+			local before = #wow.timers
+			window().scripts.OnEvent(window(), "GET_ITEM_INFO_RECEIVED", 777, true)
+			assert.equals(before, #wow.timers)
+			window().scripts.OnEvent(window(), "GET_ITEM_INFO_RECEIVED", 2, true)
 			assert.equals(before + 1, #wow.timers)
 			wow.runTimers()
-			assert.equals(5, #frameOf().model.rows)
-		end)
-
-		it("a redraw refreshes the tooltip of the hovered row", function()
-			ns.Window.Toggle()
-			local row = buttons(frameOf().itemContent)[1]
-			row.scripts.OnEnter(row)
-			assert.equals(1, _G.GameTooltip.itemID)
-			MasterAnglerDB.chars["Tester-Realm"].catches = { { 4, 20, 1, 1, 1700000000, 0, 9 } }
-			ns.Window.Refresh()
-			assert.equals(4, _G.GameTooltip.itemID)
-			assert.equals("Caught: 9", _G.GameTooltip.lines[1])
-		end)
-
-		it("a redraw does not reopen a tooltip the row no longer shows", function()
-			ns.Window.Toggle()
-			local row = buttons(frameOf().itemContent)[1]
-			row.scripts.OnEnter(row)
-			row.scripts.OnLeave(row)
-			ns.Window.Refresh()
-			assert.is_false(_G.GameTooltip.shown)
-		end)
-
-		it("a failed build is retried instead of reused", function()
-			local base = _G.CreateFrame
-			_G.CreateFrame = function(kind, ...)
-				if kind == "ScrollFrame" then
-					error("no template")
-				end
-				return base(kind, ...)
-			end
-			assert.has.errors(function()
-				ns.Window.Create()
-			end)
-			_G.CreateFrame = base
-			ns.Window.Toggle()
-			assert.is_truthy(frameOf().itemContent)
-			assert.is_true(frameOf():IsShown())
-		end)
-
-		it("GET_ITEM_INFO_RECEIVED redraws a shown window for a requested item only", function()
-			_G.C_Item.GetItemNameByID = function()
-				return nil
-			end
-			_G.C_Item.RequestLoadItemDataByID = function() end
-			ns.Window.Toggle()
-			assert.equals("...", frameOf().model.rows[1].name)
-			_G.C_Item.GetItemNameByID = function(id)
-				return "Renamed " .. id
-			end
-			frameOf().scripts.OnEvent(frameOf(), "GET_ITEM_INFO_RECEIVED", 777, true)
-			wow.runTimers()
-			assert.equals("...", frameOf().model.rows[1].name)
-			frameOf().scripts.OnEvent(frameOf(), "GET_ITEM_INFO_RECEIVED", 1, true)
-			frameOf().scripts.OnEvent(frameOf(), "GET_ITEM_INFO_RECEIVED", 1, true)
-			assert.equals(1, #wow.timers)
-			wow.runTimers()
-			assert.equals("Renamed 1", frameOf().model.rows[1].name)
-			frameOf().scripts.OnEvent(frameOf(), "GET_ITEM_INFO_RECEIVED", 1, true)
+			assert.same({ "Angelfish", "Bass", "Carp", "???" }, names(window().model.rows))
+			window().scripts.OnEvent(window(), "GET_ITEM_INFO_RECEIVED", 2, true)
 			assert.equals(0, #wow.timers)
 		end)
 
-		it("GET_ITEM_INFO_RECEIVED redraws for an uncached name without the request API", function()
-			_G.C_Item.GetItemNameByID = function()
-				return nil
-			end
-			_G.C_Item.RequestLoadItemDataByID = nil
+		it("a failing redraw is reported once and does not raise", function()
 			ns.Window.Toggle()
-			_G.C_Item.GetItemNameByID = function(id)
-				return "Loaded " .. id
-			end
-			frameOf().scripts.OnEvent(frameOf(), "GET_ITEM_INFO_RECEIVED", 1, true)
-			wow.runTimers()
-			assert.equals("Loaded 1", frameOf().model.rows[1].name)
-		end)
-
-		it("a failed redraw from show, click or item load prints one message and does not raise", function()
-			_G.C_Item.GetItemNameByID = function()
-				return nil
-			end
-			_G.C_Item.RequestLoadItemDataByID = function() end
-			ns.Window.Toggle()
-			local zone = buttons(frameOf().zoneContent)[1]
-			ns.Journal.Build = function()
-				error("boom")
-			end
+			_G.C_Map.GetMapInfo = nil
+			ns.Window.ShowDetail(1)
+			_G.GameTooltip = nil
+			local cell = cellFrames()[1]
 			assert.has_no.errors(function()
-				zone.scripts.OnClick(zone)
-				frameOf():Hide()
-				frameOf():Show()
-				frameOf().scripts.OnEvent(frameOf(), "GET_ITEM_INFO_RECEIVED", 1, true)
-				wow.runTimers()
+				window().scripts.OnShow(window())
+			end)
+			assert.has_no.errors(function()
+				cell.scripts.OnClick(cell)
 			end)
 			assert.equals(1, #_G.DEFAULT_CHAT_FRAME.lines)
 		end)
 
-		it("read-only mode shows no character data and the newer-data text", function()
-			ns.readOnly = true
+		it("Reset forgets the frame and the state", function()
 			ns.Window.Toggle()
-			assert.equals(0, #frameOf().model.zones)
-			assert.equals(ns.L.DB_NEWER, lastCall(frameOf().empty, "SetText")[2])
-		end)
-
-		it("a catch without a server time shows no dates", function()
-			MasterAnglerDB.chars["Tester-Realm"].catches = { { 1, 20, 1, 1, 0, 0, 1 } }
-			ns.Window.Toggle()
-			local row = buttons(frameOf().itemContent)[1]
-			row.scripts.OnEnter(row)
-			assert.same({ "Caught: 1" }, _G.GameTooltip.lines)
-		end)
-
-		it("Reset forgets the frame", function()
-			ns.Window.Toggle()
+			ns.Window.SetSearch("an")
 			ns.Window.Reset()
 			assert.is_false(ns.Window.Refresh())
+			assert.equals("", ns.Window.BuildModel().query)
 		end)
 	end)
 end)
