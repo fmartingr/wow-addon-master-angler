@@ -187,7 +187,9 @@ local function hookBusyFrames()
 end
 
 local function startup()
-	ns.CVars.Restore(SOFT_GROUP)
+	if not ns.Cast.lineOut then
+		ns.CVars.Restore(SOFT_GROUP)
+	end
 	hookBusyFrames()
 	Interact.RefreshKeys()
 end

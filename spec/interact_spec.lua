@@ -374,6 +374,17 @@ describe("Interact", function()
 			assert.is_nil(MasterAnglerDB.cvarBackup)
 		end)
 
+		it("keeps the soft-interact CVars at login while the live channel shows the line out", function()
+			wow.cvars.SoftTargetInteractArc = "0"
+			_G.UnitChannelInfo = function()
+				return "Fishing"
+			end
+			fire("PLAYER_LOGIN")
+			assert.is_true(ns.Cast.lineOut)
+			assert.equals("2", wow.cvars.SoftTargetInteractArc)
+			assert.is_not_nil(MasterAnglerDB.cvarBackup)
+		end)
+
 		it("sets the keys at login", function()
 			ns.Interact.ClearOverride()
 			fire("PLAYER_LOGIN")
