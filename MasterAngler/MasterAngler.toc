@@ -11,6 +11,7 @@
 ## Author: Felipe M.
 ## Version: 0.1.0
 ## X-License: MIT
+## IconTexture: Interface\AddOns\MasterAngler\assets\icon
 ## SavedVariables: MasterAnglerDB
 Libs/LibStub/LibStub.lua
 Libs/CallbackHandler-1.0/CallbackHandler-1.0.lua

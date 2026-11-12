@@ -1,5 +1,9 @@
 # Master Angler
 
+<p align="center">
+  <img src="assets/icon.png" alt="Master Angler icon" width="128">
+</p>
+
 Fishing quality of life addon for WoW Forever.
 
 ## Features
