@@ -95,16 +95,9 @@ local function eligible()
 		and not UnitExists("mouseover")
 end
 
-local function spellName(spellID)
-	local name = C_Spell and ns.Safe(C_Spell.GetSpellName, spellID) or ns.Safe(GetSpellInfo, spellID)
-	if type(name) == "string" and name ~= "" then
-		return name
-	end
-	return nil
-end
-
 -- The binding is set after the first click, so the second press itself fires the action.
 local function bindTarget()
+	Cast.SyncLine()
 	if Cast.lineOut then
 		SetOverrideBinding(button, true, DOUBLE_CLICK_KEY, "INTERACTTARGET")
 		return true
@@ -112,7 +105,7 @@ local function bindTarget()
 	if not Cast.Prepare() then
 		return false
 	end
-	local name = button:GetAttribute("type") == "spell" and spellName(ns.Fishing.SpellID())
+	local name = button:GetAttribute("type") == "spell" and ns.Fishing.SpellName(ns.Fishing.SpellID())
 	if name then
 		SetOverrideBindingSpell(button, true, DOUBLE_CLICK_KEY, name)
 	else
@@ -177,6 +170,13 @@ function Cast.OnMouseUp(_, mouseButton)
 	end
 end
 
+local function setLine(out)
+	if Cast.lineOut ~= out then
+		Cast.lineOut = out
+		notify()
+	end
+end
+
 function Cast.OnChannel(event, unit, _, spellID)
 	if ns.IsSecret(unit) or unit ~= "player" or ns.IsSecret(spellID) then
 		return
@@ -184,11 +184,7 @@ function Cast.OnChannel(event, unit, _, spellID)
 	if not ns.Fishing.IsFishingSpell(spellID) then
 		return
 	end
-	local out = event == "UNIT_SPELLCAST_CHANNEL_START"
-	if Cast.lineOut ~= out then
-		Cast.lineOut = out
-		notify()
-	end
+	setLine(event == "UNIT_SPELLCAST_CHANNEL_START")
 end
 
 -- A key override can sit on for minutes, and the lure crossing its refresh time fires no event.
@@ -214,12 +210,16 @@ local function prepare()
 	Cast.Prepare()
 end
 
--- A /reload during the channel fires no CHANNEL_START, so the line state comes from the live channel.
-local function syncLine()
-	local spellID = select(8, ns.Safe(UnitChannelInfo, "player"))
-	Cast.lineOut = spellID ~= nil and ns.Fishing.IsFishingSpell(spellID)
+-- A /reload during the channel fires no CHANNEL_START, and an event can carry an ID the list lacks,
+-- so the line state also comes from the live channel, by spell name.
+function Cast.SyncLine()
+	if type(UnitChannelInfo) ~= "function" then
+		return
+	end
+	local channel = ns.Safe(UnitChannelInfo, "player")
+	local fishing = ns.Fishing.SpellName(ns.Fishing.SpellID() or ns.Fishing.SPELLS[#ns.Fishing.SPELLS])
+	setLine(type(channel) == "string" and fishing ~= nil and channel == fishing)
 end
-Cast.SyncLine = syncLine
 
 ns.On("GLOBAL_MOUSE_DOWN", Cast.OnMouseDown)
 ns.On("GLOBAL_MOUSE_UP", Cast.OnMouseUp)
@@ -236,5 +236,5 @@ ns.On("UNIT_INVENTORY_CHANGED", function(_, unit)
 end)
 ns.Mode.Subscribe(prepare)
 ns.Settings.AddToggle("doubleClick", "SET_DOUBLECLICK", "SET_DOUBLECLICK_TIP", true)
-table.insert(ns.startup, syncLine)
+table.insert(ns.startup, Cast.SyncLine)
 table.insert(ns.startup, prepare)

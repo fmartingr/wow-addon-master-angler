@@ -170,6 +170,15 @@ describe("Cast", function()
 			assert.equals("INTERACTTARGET", wow.overrides[1].name)
 		end)
 
+		it("arms the reel when the live channel shows the line out but no event came", function()
+			_G.UnitChannelInfo = function()
+				return "Fishing"
+			end
+			click(100, 100.1)
+			assert.equals("command", wow.overrides[1].kind)
+			assert.is_true(ns.Cast.lineOut)
+		end)
+
 		it("does not arm after a long press (a camera turn)", function()
 			click(100, 100.5)
 			assert.equals(0, #wow.overrides)
@@ -348,20 +357,46 @@ describe("Cast", function()
 			assert.is_true(ns.Cast.lineOut)
 		end)
 
-		it("reads a fishing channel already running at login", function()
+		it("reads a fishing channel already running at login, by spell name", function()
 			_G.UnitChannelInfo = function()
-				return "Fishing", "", 0, 0, 0, false, false, 7620
+				return "Fishing"
 			end
 			fire("PLAYER_LOGIN")
 			assert.is_true(ns.Cast.lineOut)
 			_G.UnitChannelInfo = function()
-				return "Other", "", 0, 0, 0, false, false, 1
+				return "Other"
 			end
 			ns.Cast.SyncLine()
 			assert.is_false(ns.Cast.lineOut)
 			_G.UnitChannelInfo = function() end
 			ns.Cast.SyncLine()
 			assert.is_false(ns.Cast.lineOut)
+		end)
+
+		it("keeps the state when the client has no UnitChannelInfo", function()
+			fire("UNIT_SPELLCAST_CHANNEL_START", "player", "guid", 7620)
+			_G.UnitChannelInfo = nil
+			ns.Cast.SyncLine()
+			assert.is_true(ns.Cast.lineOut)
+		end)
+
+		it("counts a channel with an unlisted spell ID that has the fishing name", function()
+			wow.spellNames[99999] = "Fishing"
+			fire("UNIT_SPELLCAST_CHANNEL_START", "player", "guid", 99999)
+			assert.is_true(ns.Cast.lineOut)
+		end)
+
+		it("notifies subscribers when the live channel changes the state", function()
+			local seen = {}
+			ns.Cast.Subscribe(function(out)
+				seen[#seen + 1] = out
+			end)
+			_G.UnitChannelInfo = function()
+				return "Fishing"
+			end
+			ns.Cast.SyncLine()
+			ns.Cast.SyncLine()
+			assert.same({ true }, seen)
 		end)
 
 		it("a failing subscriber is reported once", function()

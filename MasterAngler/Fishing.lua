@@ -32,13 +32,23 @@ function Fishing.SpellID()
 	return nil
 end
 
+function Fishing.SpellName(spellID)
+	local name = C_Spell and ns.Safe(C_Spell.GetSpellName, spellID) or ns.Safe(GetSpellInfo, spellID)
+	if type(name) == "string" and name ~= "" then
+		return name
+	end
+	return nil
+end
+
+-- Every rank shares one name, so a channel with an ID that is not in the list still counts.
 function Fishing.IsFishingSpell(spellID)
 	for _, id in ipairs(Fishing.SPELLS) do
 		if id == spellID then
 			return true
 		end
 	end
-	return false
+	local name = Fishing.SpellName(spellID)
+	return name ~= nil and name == Fishing.SpellName(Fishing.SPELLS[#Fishing.SPELLS])
 end
 
 function Fishing.BestLure()

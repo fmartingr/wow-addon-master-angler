@@ -349,6 +349,21 @@ describe("Interact", function()
 			assert.is_nil(MasterAnglerDB.cvarBackup)
 		end)
 
+		it("applies the soft-interact CVars the reel needs", function()
+			wow.cvars.SoftTargetInteract = "1"
+			wow.cvars.SoftTargetInteractRangeIsHard = "1"
+			wow.cvars.SoftTargetInteractRange = "5"
+			wow.cvars.SoftTargetInteractArc = "0"
+			lineStart()
+			assert.equals("3", wow.cvars.SoftTargetInteract)
+			assert.equals("0", wow.cvars.SoftTargetInteractRangeIsHard)
+			assert.equals("30", wow.cvars.SoftTargetInteractRange)
+			assert.equals("2", wow.cvars.SoftTargetInteractArc)
+			lineStop()
+			assert.equals("1", wow.cvars.SoftTargetInteract)
+			assert.equals("1", wow.cvars.SoftTargetInteractRangeIsHard)
+		end)
+
 		it("restores at login after a crash with the line out", function()
 			wow.cvars.SoftTargetInteractArc = "1"
 			wow.cvars.SoftTargetInteractRange = "10"

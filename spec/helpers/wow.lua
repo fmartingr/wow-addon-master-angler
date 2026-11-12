@@ -296,7 +296,8 @@ function M.installStubs()
 	end
 	_G.C_Spell = {
 		GetSpellName = function(id)
-			return M.spellNames[id] or "Fishing"
+			local fishing = { [7620] = true, [7731] = true, [7732] = true, [18248] = true }
+			return M.spellNames[id] or (fishing[id] and "Fishing" or ("Spell " .. tostring(id)))
 		end,
 	}
 	_G.ClearOverrideBindings = function(owner)

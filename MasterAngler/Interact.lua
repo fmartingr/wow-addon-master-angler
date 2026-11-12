@@ -9,7 +9,12 @@ local CAST_BUTTON = "MasterAnglerCastButton"
 local QUIET_SECONDS = 1
 local POLL_SECONDS = 0.2
 local SOFT_GROUP = "soft"
-local SOFT_VALUES = { SoftTargetInteractArc = "2", SoftTargetInteractRange = "30" }
+local SOFT_VALUES = {
+	SoftTargetInteract = "3",
+	SoftTargetInteractRange = "30",
+	SoftTargetInteractRangeIsHard = "0",
+	SoftTargetInteractArc = "2",
+}
 
 Interact.BUSY_FRAMES = {
 	"LootFrame",

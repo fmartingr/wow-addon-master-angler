@@ -41,9 +41,22 @@ describe("Fishing", function()
 			assert.is_nil(ns.Fishing.SpellID())
 		end)
 
-		it("knows the fishing spell IDs", function()
+		it("knows the fishing spell IDs and any spell with the fishing name", function()
 			assert.is_true(ns.Fishing.IsFishingSpell(7620))
 			assert.is_false(ns.Fishing.IsFishingSpell(1))
+			wow.spellNames[555] = "Fishing"
+			assert.is_true(ns.Fishing.IsFishingSpell(555))
+		end)
+
+		it("SpellName works with GetSpellInfo and without any name API", function()
+			_G.C_Spell = nil
+			_G.GetSpellInfo = function()
+				return "Pesca"
+			end
+			assert.equals("Pesca", ns.Fishing.SpellName(7620))
+			_G.GetSpellInfo = nil
+			assert.is_nil(ns.Fishing.SpellName(7620))
+			assert.is_false(ns.Fishing.IsFishingSpell(555))
 		end)
 	end)
 
