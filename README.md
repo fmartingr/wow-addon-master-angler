@@ -59,5 +59,5 @@ MIT, see `LICENSE`. The bundled libraries keep their own licenses in `MasterAngl
 
 - `.github/workflows/ci.yml` runs luacheck, stylua, busted with coverage and a package build on each pull request and each push to `main`.
 - `.github/workflows/release.yml` publishes to CurseForge and GitHub on a tag `v*`.
-- Before the first release, add `## X-Curse-Project-ID: <id>` to the TOC and the `CF_API_TOKEN` repository secret.
+- The CurseForge project ID is in the TOC. Before the first release, add the `CF_API_TOKEN` repository secret.
 - Keep the TOC `Version` equal to the top `CHANGELOG.md` heading.
