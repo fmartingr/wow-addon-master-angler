@@ -240,6 +240,17 @@ describe("Fishing", function()
 			assert.is_false(ns.Fishing.NeedsLure())
 		end)
 
+		it("is false for 8 seconds after a lure use, even when the pole shows no lure yet", function()
+			setup({ lure = true })
+			assert.is_true(ns.Fishing.NeedsLure())
+			ns.Fishing.NoteLureUse()
+			assert.is_false(ns.Fishing.NeedsLure())
+			wow.now = wow.now + 7.9
+			assert.is_false(ns.Fishing.NeedsLure())
+			wow.now = wow.now + 0.2
+			assert.is_true(ns.Fishing.NeedsLure())
+		end)
+
 		it("is false when the time left is unknown", function()
 			setup({ lure = true })
 			_G.C_PaperDollInfo = nil

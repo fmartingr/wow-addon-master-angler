@@ -8,6 +8,9 @@ local WEAPON_CLASS = 2
 local POLE_SUBCLASS = 20
 local LURE_REFRESH_SECONDS = 30
 local MS_THRESHOLD = 3600
+local LURE_GRACE_SECONDS = 8
+
+local lastLureUse
 
 Fishing.SPELLS = { 18248, 7732, 7731, 7620 }
 Fishing.LURES = { 6533, 6532, 7307, 6530, 6811, 6529 }
@@ -109,8 +112,16 @@ function Fishing.LureSecondsLeft()
 	return seconds
 end
 
+-- The pole shows a new lure a moment after the use, so a fresh use must not count as no lure.
+function Fishing.NoteLureUse()
+	lastLureUse = GetTime()
+end
+
 function Fishing.NeedsLure()
 	if not ns.Settings.Get("autoLure") or not Fishing.PoleEquipped() or not Fishing.BestLure() then
+		return false
+	end
+	if lastLureUse and GetTime() - lastLureUse < LURE_GRACE_SECONDS then
 		return false
 	end
 	local seconds = Fishing.LureSecondsLeft()

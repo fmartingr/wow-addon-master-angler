@@ -4,14 +4,17 @@ ns.Cast = {}
 local Cast = ns.Cast
 
 local BUTTON_NAME = "MasterAnglerCastButton"
-local MIN_GAP = 0.05
-local MAX_GAP = 0.4
+local DOUBLE_CLICK_KEY = "BUTTON2"
+local CLICK_MAX_SECONDS = 0.3
+local WINDOW_SECONDS = 0.4
 local SAFETY_SECONDS = 1
 
 local subscribers = {}
-local lastRightDown
+local downAt
+local windowOpen = false
+local pressed = false
+local windowGeneration = 0
 local buttonReady = false
-local overrideGeneration = 0
 
 Cast.lineOut = false
 
@@ -79,60 +82,99 @@ function Cast.ClearOverride()
 	return true
 end
 
-local function isDoubleClick(now)
-	local previous = lastRightDown
-	lastRightDown = now
-	if not previous then
-		return false
-	end
-	local gap = now - previous
-	-- A pair is spent even when the cast is refused, so its second press never starts a new pair.
-	if gap >= MIN_GAP and gap <= MAX_GAP then
-		lastRightDown = nil
-		return true
-	end
-	return false
-end
-
 local function overWorld()
 	local foci = ns.Safe(GetMouseFoci)
 	return type(foci) == "table" and foci[1] == WorldFrame
+end
+
+local function eligible()
+	return ns.Settings.Get("doubleClick")
+		and not InCombatLockdown()
+		and ns.Fishing.Active()
+		and overWorld()
+		and not UnitExists("mouseover")
+end
+
+local function spellName(spellID)
+	local name = C_Spell and ns.Safe(C_Spell.GetSpellName, spellID) or ns.Safe(GetSpellInfo, spellID)
+	if type(name) == "string" and name ~= "" then
+		return name
+	end
+	return nil
+end
+
+-- The binding is set after the first click, so the second press itself fires the action.
+local function bindTarget()
+	if Cast.lineOut then
+		SetOverrideBinding(button, true, DOUBLE_CLICK_KEY, "INTERACTTARGET")
+		return true
+	end
+	if not Cast.Prepare() then
+		return false
+	end
+	local name = button:GetAttribute("type") == "spell" and spellName(ns.Fishing.SpellID())
+	if name then
+		SetOverrideBindingSpell(button, true, DOUBLE_CLICK_KEY, name)
+	else
+		SetOverrideBindingClick(button, true, DOUBLE_CLICK_KEY, BUTTON_NAME)
+	end
+	return true
+end
+
+local function closeWindow()
+	windowOpen, pressed = false, false
+	Cast.ClearOverride()
+end
+
+local function openWindow()
+	if not bindTarget() then
+		return
+	end
+	windowOpen, pressed = true, false
+	windowGeneration = windowGeneration + 1
+	local generation = windowGeneration
+	C_Timer.After(WINDOW_SECONDS, function()
+		if generation == windowGeneration and not pressed then
+			closeWindow()
+		end
+	end)
+	C_Timer.After(WINDOW_SECONDS + SAFETY_SECONDS, function()
+		if generation == windowGeneration then
+			closeWindow()
+		end
+	end)
+end
+
+function Cast.WindowOpen()
+	return windowOpen
 end
 
 function Cast.OnMouseDown(_, mouseButton)
 	if mouseButton ~= "RightButton" then
 		return
 	end
-	local double = isDoubleClick(GetTime())
-	if not double then
+	if windowOpen then
+		pressed = true
 		return
 	end
-	if
-		not ns.Settings.Get("doubleClick")
-		or InCombatLockdown()
-		or Cast.lineOut
-		or not ns.Fishing.Active()
-		or not overWorld()
-		or UnitExists("mouseover")
-	then
+	downAt = eligible() and GetTime() or nil
+end
+
+function Cast.OnMouseUp(_, mouseButton)
+	if mouseButton ~= "RightButton" then
 		return
 	end
-	if not Cast.Prepare() then
-		return
-	end
-	-- The second press started a camera turn whose release the override takes, so it would never end.
-	if ns.Safe(IsMouselooking) then
-		ns.Safe(MouselookStop)
-	end
-	SetOverrideBindingClick(button, true, "BUTTON2", BUTTON_NAME)
-	overrideGeneration = overrideGeneration + 1
-	local generation = overrideGeneration
-	-- A timer left from an earlier override must not drop a newer one before its click.
-	C_Timer.After(SAFETY_SECONDS, function()
-		if generation == overrideGeneration then
-			Cast.ClearOverride()
+	if windowOpen then
+		if pressed then
+			closeWindow()
 		end
-	end)
+		return
+	end
+	local started = downAt
+	downAt = nil
+	if started and GetTime() - started <= CLICK_MAX_SECONDS and eligible() then
+		openWindow()
+	end
 end
 
 function Cast.OnChannel(event, unit, _, spellID)
@@ -161,7 +203,10 @@ button:SetScript("PostClick", function(_, _, down)
 	if down then
 		return
 	end
-	Cast.ClearOverride()
+	if button:GetAttribute("type") == "item" then
+		ns.Fishing.NoteLureUse()
+	end
+	closeWindow()
 	Cast.Prepare()
 end)
 
@@ -177,9 +222,10 @@ end
 Cast.SyncLine = syncLine
 
 ns.On("GLOBAL_MOUSE_DOWN", Cast.OnMouseDown)
+ns.On("GLOBAL_MOUSE_UP", Cast.OnMouseUp)
 ns.On("UNIT_SPELLCAST_CHANNEL_START", Cast.OnChannel)
 ns.On("UNIT_SPELLCAST_CHANNEL_STOP", Cast.OnChannel)
-ns.On("PLAYER_REGEN_DISABLED", Cast.ClearOverride)
+ns.On("PLAYER_REGEN_DISABLED", closeWindow)
 ns.On("PLAYER_REGEN_ENABLED", prepare)
 ns.On("BAG_UPDATE_DELAYED", prepare)
 ns.On("PLAYER_EQUIPMENT_CHANGED", prepare)

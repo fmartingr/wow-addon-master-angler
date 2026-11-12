@@ -30,6 +30,16 @@ describe("Cast", function()
 		fire("GLOBAL_MOUSE_DOWN", "RightButton")
 	end
 
+	local function rightUp(at)
+		wow.now = at
+		fire("GLOBAL_MOUSE_UP", "RightButton")
+	end
+
+	local function click(downAt, upAt)
+		rightDown(downAt)
+		rightUp(upAt)
+	end
+
 	local function needLure()
 		wow.itemCounts[6533] = 2
 		wow.tempEnchant = nil
@@ -125,185 +135,185 @@ describe("Cast", function()
 	end)
 
 	describe("double click", function()
-		it("sets the override for two clicks in the window", function()
-			rightDown(100)
-			assert.equals(0, #wow.overrides)
-			rightDown(100.2)
+		it("arms the cast by spell name after a quick first click, before the second press", function()
+			click(100, 100.1)
 			assert.equals(1, #wow.overrides)
 			local override = wow.overrides[1]
 			assert.equals(button, override.owner)
 			assert.is_true(override.priority)
 			assert.equals("BUTTON2", override.key)
-			assert.equals("MasterAnglerCastButton", override.name)
-			assert.equals("spell", button:GetAttribute("type"))
+			assert.equals("spell", override.kind)
+			assert.equals("Fishing", override.name)
+			assert.is_true(ns.Cast.WindowOpen())
 		end)
 
-		it("stops the camera turn that the second press started", function()
-			rightDown(100)
-			wow.mouselooking = true
-			rightDown(100.2)
-			assert.is_false(wow.mouselooking)
+		it("falls back to a click on the button when the spell name is unknown", function()
+			_G.C_Spell = nil
+			_G.GetSpellInfo = function() end
+			click(100, 100.1)
+			assert.equals("click", wow.overrides[1].kind)
+			assert.equals("MasterAnglerCastButton", wow.overrides[1].name)
 		end)
 
-		it("prepares the lure when one is needed", function()
+		it("arms the lure click when a lure is needed", function()
 			needLure()
-			rightDown(100)
-			rightDown(100.2)
+			click(100, 100.1)
 			assert.equals("item", button:GetAttribute("type"))
+			assert.equals("click", wow.overrides[1].kind)
+			assert.equals("MasterAnglerCastButton", wow.overrides[1].name)
+		end)
+
+		it("arms the reel (Interact action) while the line is out", function()
+			fire("UNIT_SPELLCAST_CHANNEL_START", "player", "guid", 7620)
+			click(100, 100.1)
+			assert.equals("command", wow.overrides[1].kind)
+			assert.equals("INTERACTTARGET", wow.overrides[1].name)
+		end)
+
+		it("does not arm after a long press (a camera turn)", function()
+			click(100, 100.5)
+			assert.equals(0, #wow.overrides)
 		end)
 
 		it("ignores other buttons", function()
 			wow.now = 100
 			fire("GLOBAL_MOUSE_DOWN", "LeftButton")
-			wow.now = 100.2
-			fire("GLOBAL_MOUSE_DOWN", "LeftButton")
+			wow.now = 100.1
+			fire("GLOBAL_MOUSE_UP", "LeftButton")
 			assert.equals(0, #wow.overrides)
 		end)
 
-		it("does not set the override outside the window", function()
-			rightDown(100)
-			rightDown(100.01)
-			assert.equals(0, #wow.overrides)
-			rightDown(101)
-			assert.equals(0, #wow.overrides)
-		end)
-
-		it("does not set the override on UI, with a mouseover unit, or in combat", function()
+		it("does not arm on UI, with a mouseover unit, or in combat", function()
 			wow.mouseFocus = {}
-			rightDown(100)
-			rightDown(100.2)
+			click(100, 100.1)
 			assert.equals(0, #wow.overrides)
 			wow.mouseFocus = nil
 
 			wow.units.mouseover = true
-			rightDown(200)
-			rightDown(200.2)
+			click(200, 200.1)
 			assert.equals(0, #wow.overrides)
 			wow.units.mouseover = nil
 
 			wow.combat = true
-			rightDown(300)
-			rightDown(300.2)
+			click(300, 300.1)
+			assert.equals(0, #wow.overrides)
+		end)
+
+		it("does not arm when the mouse leaves the world during the click", function()
+			rightDown(100)
+			wow.mouseFocus = {}
+			rightUp(100.1)
 			assert.equals(0, #wow.overrides)
 		end)
 
 		it("does nothing with the setting off", function()
 			ns.Settings.Set("doubleClick", false)
-			rightDown(100)
-			rightDown(100.2)
+			click(100, 100.1)
 			assert.equals(0, #wow.overrides)
 		end)
 
-		it("does nothing with no pole and the mode off", function()
+		it("does nothing with no pole and the mode off, and works with the mode on", function()
 			wow.worn[16] = nil
-			rightDown(100)
-			rightDown(100.2)
+			click(100, 100.1)
 			assert.equals(0, #wow.overrides)
-		end)
-
-		it("works with the mode on and no pole", function()
-			wow.worn[16] = nil
 			ns.Char().mode.on = true
-			rightDown(100)
-			rightDown(100.2)
+			click(200, 200.1)
 			assert.equals(1, #wow.overrides)
 		end)
 
 		it("does nothing when Fishing is not learned", function()
 			wow.knownSpells[7620] = nil
-			rightDown(100)
-			rightDown(100.2)
+			click(100, 100.1)
 			assert.equals(0, #wow.overrides)
 		end)
 
-		it("does nothing while the line is out", function()
-			ns.Cast.lineOut = true
-			rightDown(100)
-			rightDown(100.2)
-			assert.equals(0, #wow.overrides)
-			ns.Cast.lineOut = false
-		end)
-
-		it("does not fire again on a triple click", function()
-			rightDown(100)
-			rightDown(100.2)
-			rightDown(100.4)
-			assert.equals(1, #wow.overrides)
-		end)
-
-		it("does not pair the second press of a refused double click with a third", function()
-			wow.mouseFocus = {}
-			rightDown(100)
-			rightDown(100.2)
-			wow.mouseFocus = nil
-			rightDown(100.35)
-			assert.equals(0, #wow.overrides)
-		end)
-
-		it("works when GetMouseFoci fails", function()
-			_G.GetMouseFoci = function()
-				error("boom")
-			end
-			rightDown(100)
-			rightDown(100.2)
+		it("an up without a matching down does nothing", function()
+			rightUp(100)
 			assert.equals(0, #wow.overrides)
 		end)
 	end)
 
-	describe("clearing the override", function()
-		local function setOverride()
-			rightDown(100)
-			rightDown(100.2)
+	describe("closing the window", function()
+		local function open()
+			click(100, 100.1)
 			assert.equals(1, #wow.overrides)
 		end
 
-		it("PostClick clears it and prepares the next action", function()
-			needLure()
-			setOverride()
-			wow.itemCounts[6533] = 0
-			button.scripts.PostClick(button, "RightButton", true)
+		it("closes at the end of the second press", function()
+			open()
+			rightDown(100.3)
 			assert.equals(1, #wow.overrides)
-			button.scripts.PostClick(button, "RightButton", false)
+			rightUp(100.4)
 			assert.equals(0, #wow.overrides)
-			assert.equals("spell", button:GetAttribute("type"))
+			assert.is_false(ns.Cast.WindowOpen())
 		end)
 
-		it("PreClick on the up picks a lure that became needed after Prepare", function()
-			assert.is_true(ns.Cast.Prepare())
-			needLure()
-			button.scripts.PreClick(button, "LeftButton", true)
-			assert.equals("spell", button:GetAttribute("type"))
-			button.scripts.PreClick(button, "LeftButton", false)
-			assert.equals("item", button:GetAttribute("type"))
-		end)
-
-		it("PLAYER_REGEN_DISABLED clears it", function()
-			setOverride()
-			fire("PLAYER_REGEN_DISABLED")
-			assert.equals(0, #wow.overrides)
-		end)
-
-		it("the 1 second timer clears it", function()
-			setOverride()
-			assert.equals(1, wow.timers[1].seconds)
+		it("closes by timer when no second press comes", function()
+			open()
 			wow.runTimers()
 			assert.equals(0, #wow.overrides)
 		end)
 
-		it("a timer from an earlier override leaves a newer one on", function()
-			setOverride()
-			button.scripts.PostClick(button, "RightButton", false)
-			rightDown(100.6)
-			rightDown(100.8)
-			assert.equals(1, #wow.overrides)
+		it("keeps the binding while the second press is held past the window", function()
+			open()
+			rightDown(100.35)
 			wow.timers[1].fn()
-			assert.equals(1, #wow.overrides)
-			wow.timers[2].fn()
+			assert.is_true(ns.Cast.WindowOpen())
+		end)
+
+		it("a stuck press is closed by the safety timer", function()
+			open()
+			rightDown(100.35)
+			local first = wow.timers[1]
+			local second = wow.timers[2]
+			first.fn()
+			assert.is_true(ns.Cast.WindowOpen())
+			second.fn()
+			assert.is_false(ns.Cast.WindowOpen())
 			assert.equals(0, #wow.overrides)
 		end)
 
+		it("a timer of an old window does not close a newer one", function()
+			open()
+			local stale = wow.timers
+			wow.timers = {}
+			rightDown(100.3)
+			rightUp(100.4)
+			click(200, 200.1)
+			for _, timer in ipairs(stale) do
+				timer.fn()
+			end
+			assert.is_true(ns.Cast.WindowOpen())
+		end)
+
+		it("a third click after the second does not arm again", function()
+			open()
+			rightDown(100.3)
+			rightUp(100.4)
+			assert.equals(0, #wow.overrides)
+			rightDown(100.5)
+			assert.equals(0, #wow.overrides)
+		end)
+
+		it("PLAYER_REGEN_DISABLED closes it", function()
+			open()
+			fire("PLAYER_REGEN_DISABLED")
+			assert.equals(0, #wow.overrides)
+			assert.is_false(ns.Cast.WindowOpen())
+		end)
+
+		it("PostClick on the up closes it, notes a lure use and prepares the next action", function()
+			needLure()
+			click(100, 100.1)
+			button.scripts.PostClick(button, "LeftButton", true)
+			assert.equals(1, #wow.overrides)
+			button.scripts.PostClick(button, "LeftButton", false)
+			assert.equals(0, #wow.overrides)
+			assert.equals("spell", button:GetAttribute("type"))
+		end)
+
 		it("does not touch the bindings in combat", function()
-			setOverride()
+			open()
 			wow.combat = true
 			assert.is_false(ns.Cast.ClearOverride())
 			assert.equals(1, #wow.overrides)

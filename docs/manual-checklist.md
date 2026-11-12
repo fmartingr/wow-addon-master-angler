@@ -20,6 +20,7 @@ No check was run by the agent: the game client is not available to it.
 | MC12 | Exit the game with fishing mode on, log in, turn the mode off: the sound values come back | not run |
 | MC13 | Kill the client process with fishing mode on, log in with the mode off: the sound values come back | not run |
 | MC14 | A double right-click on the world with the pole and no lure applies the strongest lure, and the next one casts | not run |
+| MC45 | With the line out and the bobber splash, a double right-click anywhere on the world loots the bobber | not run |
 | MC15 | A double right-click with no pole and fishing mode off does nothing | not run |
 | MC16 | A double right-click on an NPC or on UI does not cast | not run |
 | MC17 | The right-click camera turn still works after a cast | not run |

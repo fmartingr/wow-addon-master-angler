@@ -121,6 +121,7 @@ end
 
 function M.reset()
 	M.combat = false
+	M.spellNames = {}
 	M.loot = { fishing = false, slots = {} }
 	M.maps = { best = nil, info = {}, position = nil }
 	M.bindings = {}
@@ -263,12 +264,6 @@ function M.installStubs()
 	_G.GetTime = function()
 		return M.now
 	end
-	_G.IsMouselooking = function()
-		return M.mouselooking
-	end
-	_G.MouselookStop = function()
-		M.mouselooking = false
-	end
 	_G.UnitExists = function(unit)
 		return M.units[unit] == true
 	end
@@ -284,8 +279,19 @@ function M.installStubs()
 		end,
 	}
 	_G.SetOverrideBindingClick = function(owner, priority, key, name)
-		M.overrides[#M.overrides + 1] = { owner = owner, priority = priority, key = key, name = name }
+		M.overrides[#M.overrides + 1] = { owner = owner, priority = priority, key = key, name = name, kind = "click" }
 	end
+	_G.SetOverrideBindingSpell = function(owner, priority, key, name)
+		M.overrides[#M.overrides + 1] = { owner = owner, priority = priority, key = key, name = name, kind = "spell" }
+	end
+	_G.SetOverrideBinding = function(owner, priority, key, name)
+		M.overrides[#M.overrides + 1] = { owner = owner, priority = priority, key = key, name = name, kind = "command" }
+	end
+	_G.C_Spell = {
+		GetSpellName = function(id)
+			return M.spellNames[id] or "Fishing"
+		end,
+	}
 	_G.ClearOverrideBindings = function(owner)
 		M.clearedOwners[#M.clearedOwners + 1] = owner
 		local kept = {}
