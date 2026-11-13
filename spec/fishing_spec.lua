@@ -72,6 +72,16 @@ describe("Fishing", function()
 			assert.equals(6533, ns.Fishing.BestLure())
 		end)
 
+		it("counts lures with C_Item.GetItemCount, as the client has no global GetItemCount", function()
+			assert.is_nil(rawget(_G, "GetItemCount"))
+			wow.itemCounts = setmetatable({ [6811] = 20 }, {
+				__index = function()
+					return 0
+				end,
+			})
+			assert.equals(6811, ns.Fishing.BestLure())
+		end)
+
 		it("skips a lure the player cannot use yet", function()
 			wow.itemCounts = setmetatable({ [6533] = 1, [6530] = 1 }, {
 				__index = function()
@@ -269,18 +279,6 @@ describe("Fishing", function()
 			_G.C_PaperDollInfo = nil
 			_G.GetWeaponEnchantInfo = nil
 			assert.is_false(ns.Fishing.NeedsLure())
-		end)
-	end)
-
-	describe("Active", function()
-		it("is true with the mode on or a pole in hand", function()
-			assert.is_false(ns.Fishing.Active())
-			wow.worn[16] = wow.itemLink(6256)
-			wow.itemInfo[6256] = { 2, 20 }
-			assert.is_true(ns.Fishing.Active())
-			wow.worn[16] = nil
-			ns.Char().mode.on = true
-			assert.is_true(ns.Fishing.Active())
 		end)
 	end)
 end)

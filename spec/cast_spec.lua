@@ -127,10 +127,6 @@ describe("Cast", function()
 			button:SetAttribute("type", nil)
 			fire("PLAYER_LOGIN")
 			assert.equals("spell", button:GetAttribute("type"))
-			button:SetAttribute("type", nil)
-			ns.Char().gear = { [1] = wow.itemLink(5) }
-			ns.Mode.Toggle()
-			assert.equals("spell", button:GetAttribute("type"))
 		end)
 	end)
 
@@ -221,11 +217,12 @@ describe("Cast", function()
 			assert.equals(0, #wow.overrides)
 		end)
 
-		it("does nothing with no pole and the mode off, and works with the mode on", function()
+		it("does nothing with no pole, and works with a pole in hand", function()
+			local pole = wow.worn[16]
 			wow.worn[16] = nil
 			click(100, 100.1)
 			assert.equals(0, #wow.overrides)
-			ns.Char().mode.on = true
+			wow.worn[16] = pole
 			click(200, 200.1)
 			assert.equals(1, #wow.overrides)
 		end)

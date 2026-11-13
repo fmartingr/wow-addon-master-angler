@@ -16,6 +16,10 @@ local ZONE_TYPE_FALLBACK = 3
 
 local subscribers = {}
 local pending = {}
+
+local function itemIDFromLink(link)
+	return tonumber(link:match("item:(%d+)"))
+end
 local context
 
 local function zoneType()
@@ -105,7 +109,7 @@ local function onLootOpened()
 		local link = ns.Safe(GetLootSlotLink, slot)
 		if type(link) == "string" then
 			local _, _, quantity, _, _, _, _, _, _, isCoin = ns.Safe(GetLootSlotInfo, slot)
-			local itemID = ns.Gear.ItemID(link)
+			local itemID = itemIDFromLink(link)
 			if itemID and isCoin ~= true then
 				local count = type(quantity) == "number" and quantity >= 1 and math.floor(quantity) or 1
 				pending[slot] = { itemID = itemID, quantity = count }

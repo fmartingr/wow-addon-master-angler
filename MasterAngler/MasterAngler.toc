@@ -1,15 +1,15 @@
 ## Interface: 16001
 ## AllowLoadGameType: camelot
 ## Title: Master Angler
-## Notes: Fishing quality of life: one-click cast and lure, fishing gear mode, sound profile and a catch journal.
-## Notes-deDE: Angeln leicht gemacht: Auswerfen und Köder per Klick, Angelausrüstungs-Modus, Soundprofil und ein Fangjournal.
-## Notes-esES: Pesca más cómoda: lanzar y aplicar cebo con un clic, modo de equipo de pesca, perfil de sonido y un diario de capturas.
-## Notes-esMX: Pesca más cómoda: lanzar y aplicar cebo con un clic, modo de equipo de pesca, perfil de sonido y un diario de capturas.
-## Notes-frFR: Pêche simplifiée : lancer et appât en un clic, mode équipement de pêche, profil sonore et journal de prises.
-## Notes-itIT: Pesca più comoda: lancio ed esca con un clic, modalità equipaggiamento da pesca, profilo audio e diario delle catture.
-## Notes-ptBR: Pesca mais prática: lançar e aplicar isca com um clique, modo de equipamento de pesca, perfil de som e um diário de capturas.
+## Notes: Fishing quality of life: one-click cast and lure, sound profile and a catch journal.
+## Notes-deDE: Angeln leicht gemacht: Auswerfen und Köder per Klick, Soundprofil und ein Fangjournal.
+## Notes-esES: Pesca más cómoda: lanzar y aplicar cebo con un clic, perfil de sonido y un diario de capturas.
+## Notes-esMX: Pesca más cómoda: lanzar y aplicar cebo con un clic, perfil de sonido y un diario de capturas.
+## Notes-frFR: Pêche simplifiée : lancer et appât en un clic, profil sonore et journal de prises.
+## Notes-itIT: Pesca più comoda: lancio ed esca con un clic, profilo audio e diario delle catture.
+## Notes-ptBR: Pesca mais prática: lançar e aplicar isca com um clique, perfil de som e um diário de capturas.
 ## Author: Felipe M.
-## Version: 0.1.0
+## Version: 0.2.0
 ## X-License: MIT
 ## X-Curse-Project-ID: 1800237
 ## IconTexture: Interface\AddOns\MasterAngler\assets\icon
@@ -22,8 +22,6 @@ Core.lua
 Locales.lua
 Settings.lua
 Commands.lua
-Gear.lua
-Mode.lua
 CVars.lua
 Sound.lua
 Fishing.lua

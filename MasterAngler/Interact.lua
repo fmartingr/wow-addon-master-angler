@@ -81,7 +81,7 @@ function Interact.Reason(now)
 	if InCombatLockdown() then
 		return "combat"
 	end
-	if not ns.Fishing.Active() then
+	if not ns.Fishing.PoleEquipped() then
 		return "inactive"
 	end
 	if not ns.Fishing.SpellID() then
@@ -201,7 +201,7 @@ local function onPoll(_, delta)
 		return
 	end
 	elapsed = 0
-	if ns.Fishing.Active() then
+	if ns.Fishing.PoleEquipped() then
 		safeUpdate()
 	end
 end
@@ -217,7 +217,6 @@ local function watchSoftTarget()
 end
 
 ns.Cast.Subscribe(onLine)
-ns.Mode.Subscribe(Interact.Update)
 ns.Settings.AddToggle("interactKey", "SET_INTERACT", "SET_INTERACT_TIP", true)
 ns.Settings.OnChange("interactKey", Interact.Update)
 ns.On("PLAYER_REGEN_DISABLED", Interact.ClearOverride)

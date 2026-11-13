@@ -109,10 +109,9 @@ describe("Interact", function()
 			assert.is_nil(reason())
 		end)
 
-		it("works with the mode on and no pole", function()
+		it("is inactive with no pole in hand", function()
 			wow.worn[16] = nil
-			ns.Char().mode.on = true
-			assert.is_nil(reason())
+			assert.equals("inactive", reason())
 		end)
 	end)
 
@@ -217,14 +216,11 @@ describe("Interact", function()
 			assert.equals(1, #wow.overrides)
 		end)
 
-		it("clears the override when the mode ends and no pole is held", function()
-			wow.worn[16] = nil
-			ns.Char().mode.on = true
+		it("clears the override when the pole comes off", function()
 			ns.Interact.Update()
 			assert.equals(1, #wow.overrides)
-			ns.Char().gear = { [1] = wow.itemLink(5) }
-			ns.Char().mode.previous = {}
-			ns.Mode.Toggle()
+			wow.worn[16] = nil
+			fire("PLAYER_EQUIPMENT_CHANGED", 16)
 			assert.equals(0, #wow.overrides)
 		end)
 	end)

@@ -95,19 +95,15 @@ describe("Core", function()
 
 		it("creates the table with defaults and returns the same table again", function()
 			local char = ns.Char()
-			assert.is_table(char.gear)
-			assert.is_false(char.mode.on)
-			assert.is_table(char.mode.previous)
 			assert.is_table(char.catches)
 			assert.equals(char, ns.Char())
 			assert.equals(char, _G.MasterAnglerDB.chars["Tester-Realm"])
 		end)
 
 		it("completes a partial character table", function()
-			_G.MasterAnglerDB.chars["Tester-Realm"] = { catches = { { 1 } } }
+			_G.MasterAnglerDB.chars["Tester-Realm"] = { catches = "bad" }
 			local char = ns.Char()
-			assert.equals(1, #char.catches)
-			assert.is_table(char.gear)
+			assert.is_table(char.catches)
 		end)
 
 		it("returns nil without a key or without a DB", function()

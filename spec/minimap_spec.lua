@@ -57,33 +57,26 @@ describe("Minimap", function()
 		assert.is_false(ns.Minimap.Register())
 	end)
 
-	it("left-click toggles the window and right-click toggles the mode", function()
-		local window, mode = 0, 0
+	it("only left-click toggles the window", function()
+		local window = 0
 		ns.Window.Toggle = function()
 			window = window + 1
 		end
-		ns.Mode.Toggle = function()
-			mode = mode + 1
-		end
 		ns.Minimap.OnClick(nil, "LeftButton")
-		assert.same({ 1, 0 }, { window, mode })
+		assert.equals(1, window)
 		ns.Minimap.OnClick(nil, "RightButton")
-		assert.same({ 1, 1 }, { window, mode })
 		ns.Minimap.OnClick(nil, "MiddleButton")
-		assert.same({ 1, 1 }, { window, mode })
+		assert.equals(1, window)
 	end)
 
-	it("the tooltip shows the title, the mode state, the count and the hints", function()
+	it("the tooltip shows the title, the count and the hints", function()
 		local tt = wow.fake_tooltip()
 		ns.Minimap.OnTooltipShow(tt)
-		assert.equals(6, #tt.lines)
+		assert.equals(4, #tt.lines)
 		assert.equals("Master Angler", tt.lines[1].text)
-		assert.equals("Fishing mode: off", tt.lines[2].text)
-		assert.is_truthy(tt.lines[3].text:find("0 catches", 1, true))
-		ns.Char().mode.on = true
-		tt = wow.fake_tooltip()
-		ns.Minimap.OnTooltipShow(tt)
-		assert.equals("Fishing mode: on", tt.lines[2].text)
+		assert.is_truthy(tt.lines[2].text:find("0 catches", 1, true))
+		assert.equals(ns.L.HINT_LEFT, tt.lines[3].text)
+		assert.equals(ns.L.HINT_DRAG, tt.lines[4].text)
 	end)
 
 	describe("minimap command and setting", function()
@@ -167,18 +160,8 @@ describe("Minimap", function()
 		it("the tooltip shows the newer-data text and no count", function()
 			local tt = wow.fake_tooltip()
 			ns.Minimap.OnTooltipShow(tt)
-			assert.equals(ns.L.DB_NEWER, tt.lines[3].text)
+			assert.equals(ns.L.DB_NEWER, tt.lines[2].text)
 		end)
-	end)
-
-	it("right-click reports a failed mode toggle", function()
-		ns.Mode.Toggle = function()
-			error("boom")
-		end
-		assert.has_no.errors(function()
-			ns.Minimap.OnClick(nil, "RightButton")
-		end)
-		assert.equals(1, #_G.DEFAULT_CHAT_FRAME.lines)
 	end)
 
 	it("left-click reports a failed journal toggle", function()

@@ -53,7 +53,7 @@ end
 
 function Fishing.BestLure()
 	for _, itemID in ipairs(Fishing.LURES) do
-		local count = ns.Safe(GetItemCount, itemID)
+		local count = C_Item and ns.Safe(C_Item.GetItemCount, itemID)
 		-- Stronger lures need fishing skill: an unusable one would fail on every click and block the cast.
 		local usable = C_Item and ns.Safe(C_Item.IsUsableItem, itemID)
 		if type(count) == "number" and count > 0 and usable ~= false then
@@ -136,10 +136,6 @@ function Fishing.NeedsLure()
 	end
 	local seconds = Fishing.LureSecondsLeft()
 	return seconds ~= nil and seconds < LURE_REFRESH_SECONDS
-end
-
-function Fishing.Active()
-	return ns.Mode.IsOn() or Fishing.PoleEquipped()
 end
 
 ns.Settings.AddToggle("autoLure", "SET_AUTOLURE", "SET_AUTOLURE_TIP", true)

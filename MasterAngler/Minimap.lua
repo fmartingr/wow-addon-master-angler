@@ -10,26 +10,14 @@ local FALLBACK_ICON = "Interface\\Icons\\INV_Misc_QuestionMark"
 function Minimap.OnTooltipShow(tooltip)
 	local L = ns.L
 	tooltip:AddLine(L.TITLE)
-	tooltip:AddLine(ns.Mode.IsOn() and L.MODE_STATE_ON or L.MODE_STATE_OFF, 1, 1, 1)
 	-- Read-only mode hides the character data, so a count of zero would be false.
 	tooltip:AddLine(ns.readOnly and L.DB_NEWER or string.format(L.STATS, ns.Catches.Stats()), 1, 1, 1)
 	tooltip:AddLine(L.HINT_LEFT, 0.8, 0.8, 0.8)
-	tooltip:AddLine(L.HINT_RIGHT, 0.8, 0.8, 0.8)
 	tooltip:AddLine(L.HINT_DRAG, 0.8, 0.8, 0.8)
 end
 
-local CLICK_ACTIONS = {
-	LeftButton = function()
-		ns.Window.Toggle()
-	end,
-	RightButton = function()
-		ns.Mode.Toggle()
-	end,
-}
-
 function Minimap.OnClick(_, button)
-	local action = CLICK_ACTIONS[button]
-	if action and not pcall(action) then
+	if button == "LeftButton" and not pcall(ns.Window.Toggle) then
 		ns.Print(ns.L.COMMAND_FAILED)
 	end
 end

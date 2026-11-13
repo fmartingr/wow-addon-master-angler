@@ -11,8 +11,6 @@ local DEFAULTS = {
 }
 
 local CHAR_DEFAULTS = {
-	gear = {},
-	mode = { on = false, previous = {} },
 	catches = {},
 }
 

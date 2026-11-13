@@ -15,7 +15,7 @@ Sound.PROFILE = {
 }
 
 function Sound.Update()
-	if ns.Mode.IsOn() and ns.Settings.Get("sound") then
+	if ns.Fishing.PoleEquipped() and ns.Settings.Get("sound") then
 		ns.CVars.Apply(Sound.GROUP, Sound.PROFILE)
 	else
 		ns.CVars.Restore(Sound.GROUP)
@@ -24,5 +24,5 @@ end
 
 ns.Settings.AddToggle("sound", "SET_SOUND", "SET_SOUND_TIP", true)
 ns.Settings.OnChange("sound", Sound.Update)
-ns.Mode.Subscribe(Sound.Update)
+ns.On("PLAYER_EQUIPMENT_CHANGED", Sound.Update)
 table.insert(ns.startup, Sound.Update)

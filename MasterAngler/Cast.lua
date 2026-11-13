@@ -90,7 +90,7 @@ end
 local function eligible()
 	return ns.Settings.Get("doubleClick")
 		and not InCombatLockdown()
-		and ns.Fishing.Active()
+		and ns.Fishing.PoleEquipped()
 		and overWorld()
 		and not UnitExists("mouseover")
 end
@@ -234,7 +234,6 @@ ns.On("UNIT_INVENTORY_CHANGED", function(_, unit)
 		Cast.Prepare()
 	end
 end)
-ns.Mode.Subscribe(prepare)
 ns.Settings.AddToggle("doubleClick", "SET_DOUBLECLICK", "SET_DOUBLECLICK_TIP", true)
 table.insert(ns.startup, Cast.SyncLine)
 table.insert(ns.startup, prepare)
